@@ -1,0 +1,20 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.samplayer">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <application>
+        <service
+            android:name="com.samplayer.core.remote.SAMPlayerService"
+            android:process=":samplayer" />
+
+        <receiver
+            android:name="com.samplayer.core.remote.player.cmd.MediaButtonReceiver"
+            android:process=":samplayer">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>
