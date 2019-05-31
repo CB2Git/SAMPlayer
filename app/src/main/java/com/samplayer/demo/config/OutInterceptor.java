@@ -5,7 +5,7 @@ import com.samplayer.model.SongInfo;
 import com.samplayer.outconfig.InterceptorConfig;
 import com.samplayer.utils.SAMLog;
 
-public class Interceptor implements InterceptorConfig {
+public class OutInterceptor implements InterceptorConfig {
 
     private static final String TAG = "Interceptor";
 

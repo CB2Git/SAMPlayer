@@ -1,5 +1,6 @@
 package com.samplayer.core.manager;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -27,6 +28,28 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class PlayManager implements IPlayer, IReleaseAble {
 
     private static final String TAG = "RemotePlayManager";
+
+    private static final int MSG_PLAYABLE_START = 1;
+
+    private static final int MSG_PROGRESS_CHANGE = 2;
+
+    private static final int MSG_BUFFER_PROGRESS = 3;
+
+    private static final int MSG_IN_BUFFER = 4;
+
+    private static final int MSG_COMPLETE = 5;
+
+    private static final int MSG_START = 6;
+
+    private static final int MSG_PAUSE = 7;
+
+    private static final int MSG_STOP = 8;
+
+    private static final int MSG_ERROR = 9;
+
+    private static final int MSG_INTERCEPTOR_PROCESS = 10;
+
+    private boolean mAutoConnect = true;
 
     private IServiceSession mServiceSession;
 
@@ -71,175 +94,22 @@ public class PlayManager implements IPlayer, IReleaseAble {
         return mServiceSessionListener;
     }
 
-    private static final int MSG_PLAYABLE_START = 1;
-
-    private static final int MSG_PROGRESS_CHANGE = 2;
-
-    private static final int MSG_BUFFER_PROGRESS = 3;
-
-    private static final int MSG_IN_BUFFER = 4;
-
-    private static final int MSG_COMPLETE = 5;
-
-    private static final int MSG_START = 6;
-
-    private static final int MSG_PAUSE = 7;
-
-    private static final int MSG_STOP = 8;
-
-    private static final int MSG_ERROR = 9;
-
-    /**
-     * 远程播放的监听会回调到这里 然后转发给ui进程的其他监听者
-     *
-     * @return
-     */
-    private ISAMPlayerCallBack getPlayCallback() {
-        return new ISAMPlayerCallBack.Stub() {
-            @Override
-            public void onPlayableStart(SongInfo songinfo) throws RemoteException {
-                mHandler.obtainMessage(MSG_PLAYABLE_START, songinfo).sendToTarget();
-            }
-
-            @Override
-            public void onProgressChange(long second, long duration) throws RemoteException {
-                mHandler.obtainMessage(MSG_PROGRESS_CHANGE, new long[]{second, duration}).sendToTarget();
-            }
-
-            @Override
-            public void onBufferProgress(int percent) throws RemoteException {
-                mHandler.obtainMessage(MSG_BUFFER_PROGRESS, percent).sendToTarget();
-            }
-
-            @Override
-            public void onInBuffer(boolean inBuffer) throws RemoteException {
-                mHandler.obtainMessage(MSG_IN_BUFFER, inBuffer).sendToTarget();
-            }
-
-            @Override
-            public void onComplete() throws RemoteException {
-                mHandler.sendEmptyMessage(MSG_COMPLETE);
-            }
-
-            @Override
-            public void onStart() throws RemoteException {
-                mHandler.sendEmptyMessage(MSG_START);
-            }
-
-            @Override
-            public void onPause() throws RemoteException {
-                mHandler.sendEmptyMessage(MSG_PAUSE);
-            }
-
-            @Override
-            public void onStop() throws RemoteException {
-                mHandler.sendEmptyMessage(MSG_STOP);
-            }
-
-            @Override
-            public void onError(int what, int extra) throws RemoteException {
-                mHandler.obtainMessage(MSG_ERROR, what, extra).sendToTarget();
-            }
-        };
-    }
-
-    private Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case MSG_PLAYABLE_START:
-                    handlerPlayableStartEvent((SongInfo) msg.obj);
-                    break;
-                case MSG_PROGRESS_CHANGE:
-                    long[] lon = (long[]) msg.obj;
-                    handlerProgressChangeEvent(lon[0], lon[1]);
-                    break;
-                case MSG_BUFFER_PROGRESS:
-                    handlerBufferProgressEvent((Integer) msg.obj);
-                    break;
-                case MSG_IN_BUFFER:
-                    handlerInBufferEvent((Boolean) msg.obj);
-                    break;
-                case MSG_COMPLETE:
-                    handlerCompleteEvent();
-                    break;
-                case MSG_START:
-                    handlerStartEvent();
-                    break;
-                case MSG_PAUSE:
-                    handlerPauseEvent();
-                    break;
-                case MSG_STOP:
-                    handlerStopEvent();
-                    break;
-                case MSG_ERROR:
-                    handlerErrorEvent(msg.arg1, msg.arg2);
-                    break;
-            }
-        }
-    };
-
-    private void handlerErrorEvent(int what, int extra) {
-        for (IPlayerListener item : mPlayerListeners) {
-            item.onError(what, extra);
-        }
-    }
-
-    private void handlerStopEvent() {
-        for (IPlayerListener item : mPlayerListeners) {
-            item.onStop();
-        }
-    }
-
-    private void handlerPauseEvent() {
-        for (IPlayerListener item : mPlayerListeners) {
-            item.onPause();
-        }
-    }
-
-    private void handlerStartEvent() {
-        for (IPlayerListener item : mPlayerListeners) {
-            item.onStart();
-        }
-    }
-
-    private void handlerCompleteEvent() {
-        for (IPlayerListener item : mPlayerListeners) {
-            item.onComplete();
-        }
-    }
-
-    private void handlerInBufferEvent(boolean inBuffer) {
-        for (IPlayerListener item : mPlayerListeners) {
-            item.onInBuffer(inBuffer);
-        }
-    }
-
-    private void handlerBufferProgressEvent(int percent) {
-        for (IPlayerListener item : mPlayerListeners) {
-            item.onBufferProgress(percent);
-        }
-    }
-
-    private void handlerProgressChangeEvent(long second, long duration) {
-        for (IPlayerListener item : mPlayerListeners) {
-            item.onProgressChange(second, duration);
-        }
-    }
-
-    private void handlerPlayableStartEvent(SongInfo songinfo) {
-        for (IPlayerListener item : mPlayerListeners) {
-            item.onPlayableStart(songinfo);
-        }
-    }
-
     private boolean checkRemoteService() {
         boolean connect = mServiceSession != null && mServiceSession.isConnect() && mServiceSession.getRemoteService() != null;
         if (!connect) {
-            SAMLog.w(TAG, "checkRemoteService: 貌似服务没有连接....");
+            SAMLog.w(TAG, "checkRemoteService: 貌似服务没有连接,自动连接:" + mAutoConnect);
+
+            if (mAutoConnect && mServiceSession != null) {
+                mServiceSession.connect();
+                SAMLog.i(TAG, "checkRemoteService: >> 自动连接 <<");
+            }
         }
         return connect;
+    }
+
+    @Override
+    public void setAutoConnect(boolean auto) {
+        mAutoConnect = auto;
     }
 
     @Override
@@ -475,6 +345,176 @@ public class PlayManager implements IPlayer, IReleaseAble {
             return;
         }
         mPlayerListeners.remove(listener);
+    }
+
+    /**
+     * 远程播放的监听会回调到这里 然后转发给ui进程的其他监听者
+     *
+     * @return
+     */
+    private ISAMPlayerCallBack getPlayCallback() {
+        return new ISAMPlayerCallBack.Stub() {
+            @Override
+            public void onPlayableStart(SongInfo songinfo) throws RemoteException {
+                mHandler.obtainMessage(MSG_PLAYABLE_START, songinfo).sendToTarget();
+            }
+
+            @Override
+            public void onProgressChange(SongInfo info, long second, long duration) throws RemoteException {
+                Message message = mHandler.obtainMessage(MSG_PROGRESS_CHANGE, info);
+                Bundle bundle = new Bundle();
+                bundle.putLong("second", second);
+                bundle.putLong("duration", duration);
+                message.setData(bundle);
+                message.sendToTarget();
+            }
+
+            @Override
+            public void onBufferProgress(int percent) throws RemoteException {
+                mHandler.obtainMessage(MSG_BUFFER_PROGRESS, percent).sendToTarget();
+            }
+
+            @Override
+            public void onInBuffer(boolean inBuffer) throws RemoteException {
+                mHandler.obtainMessage(MSG_IN_BUFFER, inBuffer).sendToTarget();
+            }
+
+            @Override
+            public void onComplete() throws RemoteException {
+                mHandler.sendEmptyMessage(MSG_COMPLETE);
+            }
+
+            @Override
+            public void onStart() throws RemoteException {
+                mHandler.sendEmptyMessage(MSG_START);
+            }
+
+            @Override
+            public void onPause() throws RemoteException {
+                mHandler.sendEmptyMessage(MSG_PAUSE);
+            }
+
+            @Override
+            public void onStop() throws RemoteException {
+                mHandler.sendEmptyMessage(MSG_STOP);
+            }
+
+            @Override
+            public void inInterceptorProcess() throws RemoteException {
+                mHandler.sendEmptyMessage(MSG_INTERCEPTOR_PROCESS);
+            }
+
+            @Override
+            public void onError(int what, int extra) throws RemoteException {
+                mHandler.obtainMessage(MSG_ERROR, what, extra).sendToTarget();
+            }
+        };
+    }
+
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case MSG_PLAYABLE_START:
+                    handlerPlayableStartEvent((SongInfo) msg.obj);
+                    break;
+                case MSG_PROGRESS_CHANGE:
+                    Bundle data = msg.getData();
+                    long second = data.getLong("second");
+                    long duration = data.getLong("duration");
+                    if (!(msg.obj instanceof SongInfo)) {
+                        handlerProgressChangeEvent(null, second, duration);
+                    } else {
+                        handlerProgressChangeEvent((SongInfo) msg.obj, second, duration);
+                    }
+                    break;
+                case MSG_BUFFER_PROGRESS:
+                    handlerBufferProgressEvent((Integer) msg.obj);
+                    break;
+                case MSG_IN_BUFFER:
+                    handlerInBufferEvent((Boolean) msg.obj);
+                    break;
+                case MSG_COMPLETE:
+                    handlerCompleteEvent();
+                    break;
+                case MSG_START:
+                    handlerStartEvent();
+                    break;
+                case MSG_PAUSE:
+                    handlerPauseEvent();
+                    break;
+                case MSG_STOP:
+                    handlerStopEvent();
+                    break;
+                case MSG_ERROR:
+                    handlerErrorEvent(msg.arg1, msg.arg2);
+                    break;
+                case MSG_INTERCEPTOR_PROCESS:
+                    handlerInterceptorProcess();
+                    break;
+            }
+        }
+    };
+
+    private void handlerInterceptorProcess() {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.inInterceptorProcess();
+        }
+    }
+
+    private void handlerErrorEvent(int what, int extra) {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onError(what, extra);
+        }
+    }
+
+    private void handlerStopEvent() {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onStop();
+        }
+    }
+
+    private void handlerPauseEvent() {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onPause();
+        }
+    }
+
+    private void handlerStartEvent() {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onStart();
+        }
+    }
+
+    private void handlerCompleteEvent() {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onComplete();
+        }
+    }
+
+    private void handlerInBufferEvent(boolean inBuffer) {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onInBuffer(inBuffer);
+        }
+    }
+
+    private void handlerBufferProgressEvent(int percent) {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onBufferProgress(percent);
+        }
+    }
+
+    private void handlerProgressChangeEvent(SongInfo info, long second, long duration) {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onProgressChange(info, second, duration);
+        }
+    }
+
+    private void handlerPlayableStartEvent(SongInfo songinfo) {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onPlayableStart(songinfo);
+        }
     }
 
     @Override

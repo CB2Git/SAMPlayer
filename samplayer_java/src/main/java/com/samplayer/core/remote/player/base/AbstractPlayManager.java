@@ -65,11 +65,18 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
 
     @Override
     public void play(SongInfo songInfo) {
+        if (songInfo == null) {
+            return;
+        }
         play(songInfo, true);
     }
 
     @Override
     public void play(SongInfo songInfo, boolean allowReplay) {
+        if (songInfo == null) {
+            return;
+        }
+
         IMediaPlayer currentPlayer = getCurrentPlayer();
         if (songInfo.equals(getCurrentPlayInfo())) {
             SAMLog.w(TAG, "play: 当前正在播放这首歌,allowReplay = " + allowReplay);
@@ -79,8 +86,8 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
                     if (mPlayListener != null) {
                         mPlayListener.onStart();
                     }
-                    return;
                 }
+                return;
             }
         }
 
@@ -91,12 +98,12 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             mCallbackWrapper = new InterceptorCallbackWrapper(new InterceptorCallback() {
                 @Override
                 public void onContinue(SongInfo info) {
-                    mSongInfo = info;
-                    realPlay(mSongInfo);
+                    realPlay(info);
                 }
 
                 @Override
                 public void onError(int errorCode) {
+                    stop();
                     if (mPlayListener != null) {
                         mPlayListener.onError(errorCode, errorCode);
                     }
@@ -111,8 +118,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             });
             mInterceptorConfig.action(songInfo, mCallbackWrapper);
         } else {
-            mSongInfo = songInfo;
-            realPlay(mSongInfo);
+            realPlay(songInfo);
         }
     }
 
@@ -121,6 +127,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
         try {
             newPlayer.setDataSource(info.getSongUrl());
             newPlayer.prepareAsync();
+            mSongInfo = info;
             if (mPlayListener != null) {
                 mPlayListener.onPlayableStart(info);
             }

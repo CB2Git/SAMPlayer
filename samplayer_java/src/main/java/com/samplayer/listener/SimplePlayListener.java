@@ -13,7 +13,7 @@ public class SimplePlayListener implements IPlayerListener {
     }
 
     @Override
-    public void onProgressChange(long second, long duration) {
+    public void onProgressChange(SongInfo info, long second, long duration) {
         SAMLog.ifmt(TAG, "onProgressChange: %d-%d", second, duration);
     }
 

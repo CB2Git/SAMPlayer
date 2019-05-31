@@ -14,6 +14,14 @@ import java.util.List;
 public interface IPlayer {
 
     /**
+     * 设置是否自动连接
+     *
+     * @param auto true 当执行一个操作但是没有连接的时候会自动连接
+     *             注意:<b>没有连接前的操作会被忽略掉<b/>
+     */
+    void setAutoConnect(boolean auto);
+
+    /**
      * 设置播放列表
      * <p>
      * 清空当前播放列表并停止当前播放
@@ -29,7 +37,7 @@ public interface IPlayer {
     void appendPlayList(List<SongInfo> songInfos);
 
     /**
-     * 清空播放列表
+     * 清空播放列表  会导致停止当前播放并回调{@link IPlayerListener#onStop()}
      */
     void clearPlayList();
 

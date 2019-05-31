@@ -14,7 +14,7 @@ import com.samplayer.model.SongInfo;
 /**
  * 这个玩意运行在播放进程！！！！
  */
-public class NotificationConfig extends com.samplayer.outconfig.NotificationConfig {
+public class OutNotificationConfig extends com.samplayer.outconfig.NotificationConfig {
 
     private static final String channelId = "SAMPlayerID";
     private static final String channelName = "SAMPlayer";
@@ -29,7 +29,7 @@ public class NotificationConfig extends com.samplayer.outconfig.NotificationConf
     private NotificationCompat.Builder mBuilder;
 
 
-    public NotificationConfig() {
+    public OutNotificationConfig() {
     }
 
 

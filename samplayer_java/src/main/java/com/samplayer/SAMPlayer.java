@@ -33,10 +33,21 @@ public class SAMPlayer implements ISAMPlayer {
     }
 
     public static ISAMPlayer getInstance() {
+        //默认不自动连接
+        return getInstance(false);
+    }
+
+    /**
+     * @param autoConnect 当创建实例的时候自动连接
+     */
+    public static ISAMPlayer getInstance(boolean autoConnect) {
         if (sInstance == null) {
             synchronized (SAMPlayer.class) {
                 if (sInstance == null) {
                     sInstance = new SAMPlayer();
+                    if (autoConnect) {
+                        sInstance.getServiceSession().connect();
+                    }
                 }
             }
         }

@@ -8,7 +8,6 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.samplayer.SAMPlayer;
-import com.samplayer.SMAManager;
 import com.samplayer.demo.databinding.ActivityMainBinding;
 import com.samplayer.demo.utils.TimeUtils;
 import com.samplayer.listener.ServiceSessionListener;
@@ -54,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
-        SMAManager.init(this);
-        showInfo("初始化完成");
         mServiceSessionListener = new ServiceSessionListener() {
             @Override
             public void onServiceConnect() {
@@ -67,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showInfo("Service Disconnect,is Error =" + isError);
             }
         };
-        SAMPlayer.getInstance().getServiceSession().addSessionListener(mServiceSessionListener);
+        //自动连接一次
+        SAMPlayer.getInstance(true).getServiceSession().addSessionListener(mServiceSessionListener);
         showInfo("添加Remote Service监听");
         SAMPlayer.getInstance().getPlayer().addPlayListener(mSimplePlayListener);
         showInfo("添加播放相关监听");
@@ -92,11 +90,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
-        public void onProgressChange(long second, long duration) {
-            super.onProgressChange(second, duration);
+        public void onProgressChange(SongInfo info, long second, long duration) {
+            super.onProgressChange(info, second, duration);
             //当播放出错或者其他情况  这个可能为0
             if (duration <= 0) {
                 return;
+            }
+            if (info != null) {
+                mBinding.homeSongTitle.setText(info.getSongName());
             }
             mBinding.homeSongProgress.setMax((int) duration);
             //当手指按在进度条上不自动更新进度
@@ -117,6 +118,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onStop() {
             super.onStop();
+            mBinding.homeSongTitle.setText("播放停止了");
+            mBinding.homeSongProgress.setMax(0);
+            mBinding.homeSongProgress.setProgress(0);
+            mBinding.homeSongProgress.setSecondaryProgress(0);
+            mBinding.homeSongDuring.setText("00:00/00:00");
             Toast.makeText(MainActivity.this, "播放停止~", Toast.LENGTH_SHORT).show();
         }
     };

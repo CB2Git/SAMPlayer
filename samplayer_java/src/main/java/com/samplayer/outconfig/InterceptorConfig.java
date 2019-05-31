@@ -9,6 +9,8 @@ import com.samplayer.model.SongInfo;
  * <b>注意:这个回调是运行在播放进程的！！！！</b><br/>
  * <b>注意:这个回调是运行在播放进程的！！！！</b><br/>
  * <b>注意:这个回调是运行在播放进程的！！！！</b>
+ * <p>
+ * 会回调{@link com.samplayer.listener.IPlayerListener#inInterceptorProcess()}
  */
 public interface InterceptorConfig {
 

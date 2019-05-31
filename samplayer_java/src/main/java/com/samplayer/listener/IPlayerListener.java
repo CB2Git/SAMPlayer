@@ -1,5 +1,7 @@
 package com.samplayer.listener;
 
+import android.support.annotation.Nullable;
+
 import com.samplayer.model.SongInfo;
 
 public interface IPlayerListener {
@@ -14,10 +16,11 @@ public interface IPlayerListener {
     /**
      * 音乐播放进度回调
      *
+     * @param songinfo 当前正在播放的歌曲 可能为空
      * @param second   当前播放了多少秒
      * @param duration 歌曲时长多少秒  <h1>注意:如果歌曲播放出错或者获取时长失败duration会为0</h1>
      */
-    void onProgressChange(long second, long duration);
+    void onProgressChange(@Nullable SongInfo songinfo, long second, long duration);
 
     /**
      * 歌曲缓存百分比

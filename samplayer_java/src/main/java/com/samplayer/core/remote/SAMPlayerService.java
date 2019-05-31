@@ -129,11 +129,23 @@ public class SAMPlayerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        //断开远程监听
         if (mPlayerCallBack != null) {
             mPlayerCallBack.asBinder().unlinkToDeath(getDeathRecipient(), 0);
         }
+        //断开耳机拔出广播
         unregisterReceiver(mAudioStreamReceiver);
+        //停止刷新时间
+        mHandler.removeCallbacksAndMessages(null);
+        //停止播放
+        stop();
+        //释放播放器
         mIPlayManager.release();
+        //通知栏释放
+        NotificationConfig notificationConfig = mOutConfigInfo.getNotificationConfig();
+        if (notificationConfig != null) {
+            notificationConfig.release();
+        }
         stopForeground(true);
         SAMLog.i(TAG, "SAMPlayerService  onDestroy");
     }
@@ -147,9 +159,10 @@ public class SAMPlayerService extends Service {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             IMediaPlayer currentPlayer = mIPlayManager.getCurrentPlayer();
+            SongInfo currentPlayInfo = mIPlayManager.getCurrentPlayInfo();
             long duration = currentPlayer.getDuration();
             long currentPosition = currentPlayer.getCurrentPosition();
-            notifyProgressChange(currentPosition, duration);
+            notifyProgressChange(currentPlayInfo, currentPosition, duration);
             mHandler.removeMessages(MSG_TIME_UPDATE);
             mHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
         }
@@ -219,7 +232,7 @@ public class SAMPlayerService extends Service {
 
             @Override
             public void inInterceptorProcess() {
-
+                notifyInterceptorProcess();
             }
 
 
@@ -325,7 +338,6 @@ public class SAMPlayerService extends Service {
     /**
      * 当正在播放此歌曲的时候不做任何处理  没有播放则会开始播放
      */
-
     public void play() {
         SongInfo current = mPlayQueueManager.getCurrent();
         if (current == null) {
@@ -376,7 +388,7 @@ public class SAMPlayerService extends Service {
 
     public void stop() {
         mIPlayManager.stop();
-        mHandler.removeMessages(MSG_TIME_UPDATE);
+        mHandler.removeCallbacksAndMessages(null);
         stopForeground(true);
         notifyStop();
     }
@@ -419,13 +431,17 @@ public class SAMPlayerService extends Service {
 
     public void next() {
         SongInfo songInfo = mPlayQueueManager.next();
-        mIPlayManager.play(songInfo);
+        if (songInfo != null) {
+            mIPlayManager.play(songInfo);
+        }
     }
 
 
     public void previous() {
         SongInfo songInfo = mPlayQueueManager.previous();
-        mIPlayManager.play(songInfo);
+        if (songInfo != null) {
+            mIPlayManager.play(songInfo);
+        }
     }
 
 
@@ -455,13 +471,13 @@ public class SAMPlayerService extends Service {
     }
 
 
-    private void notifyProgressChange(long position, long duration) {
+    private void notifyProgressChange(SongInfo info, long position, long duration) {
         try {
             if (duration < 0) {
                 duration = 0;
             }
             //转换为秒
-            mPlayerCallBack.onProgressChange(position / 1000, duration / 1000);
+            mPlayerCallBack.onProgressChange(info, position / 1000, duration / 1000);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -552,6 +568,16 @@ public class SAMPlayerService extends Service {
         if (mPlayerCallBack != null) {
             try {
                 mPlayerCallBack.onStop();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void notifyInterceptorProcess() {
+        if (mPlayerCallBack != null) {
+            try {
+                mPlayerCallBack.inInterceptorProcess();
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -27,13 +27,11 @@ dependencies {
     testImplementation "junit:junit:${versions.junit}"
     androidTestImplementation "com.android.support.test:runner:${versions.runner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso_core}"
-
     implementation project(':samplayer_java')
-
     compileOnly "tv.danmaku.ijk.media:ijkplayer-java:${versions.ijk}"
     implementation "tv.danmaku.ijk.media:ijkplayer-armv7a:${versions.ijk}"
     implementation "tv.danmaku.ijk.media:ijkplayer-armv5:${versions.ijk}"
-    implementation "tv.danmaku.ijk.media:ijkplayer-arm64:${versions.ijk}"
+    //implementation "tv.danmaku.ijk.media:ijkplayer-arm64:${versions.ijk}"
     implementation "tv.danmaku.ijk.media:ijkplayer-x86:${versions.ijk}"
-    implementation "tv.danmaku.ijk.media:ijkplayer-x86_64:${versions.ijk}"
+    //implementation "tv.danmaku.ijk.media:ijkplayer-x86_64:${versions.ijk}"
 }

@@ -14,11 +14,11 @@ interface ISAMPlayerCallBack {
 
     /**
      * 音乐播放进度回调
-     *
+     * @param songinfo 当前正在播放的歌曲
      * @param second   当前播放了多少秒
      * @param duration 歌曲时长多少秒
      */
-    void onProgressChange(long second, long duration);
+    void onProgressChange(inout SongInfo songinfo,long second, long duration);
 
     /**
      * 歌曲缓存百分比
@@ -53,8 +53,8 @@ interface ISAMPlayerCallBack {
     void onStop();
 
     /**
-    * 拦截器接管了 正在处理  可以进行耗时操作
-    * /
+    * 正在被拦截器处理
+    * */
     void inInterceptorProcess();
 
     /**

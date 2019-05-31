@@ -90,6 +90,13 @@ public abstract class NotificationConfig extends BroadcastReceiver {
     }
 
     /**
+     * 当Service Destroy的时候会被调用
+     */
+    public void release() {
+        mContext.unregisterReceiver(this);
+    }
+
+    /**
      * 更新通知  辅助功能而已
      *
      * @param context
