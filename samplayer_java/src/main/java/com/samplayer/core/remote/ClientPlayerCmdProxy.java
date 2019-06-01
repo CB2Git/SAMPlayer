@@ -7,6 +7,7 @@ import com.samplayer.aidl.ISAMPlayerService;
 import com.samplayer.model.PlayMode;
 import com.samplayer.model.SongInfo;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -32,6 +33,14 @@ public class ClientPlayerCmdProxy extends ISAMPlayerService.Stub {
         if (mSAMPlayerService != null) {
             mSAMPlayerService.appendPlayList(songInfos);
         }
+    }
+
+    @Override
+    public List<SongInfo> getPlayList() throws RemoteException {
+        if (mSAMPlayerService != null) {
+            return mSAMPlayerService.getPlayList();
+        }
+        return Collections.emptyList();
     }
 
     @Override

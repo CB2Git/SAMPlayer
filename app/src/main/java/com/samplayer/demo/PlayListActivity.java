@@ -4,24 +4,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.samplayer.SAMPlayer;
 import com.samplayer.demo.databinding.ActivityPlayListBinding;
+import com.samplayer.model.SongInfo;
+
+import java.util.List;
 
 public class PlayListActivity extends AppCompatActivity {
 
     private ActivityPlayListBinding mBinding;
 
-    private MyAdapter mMyAdapter = new MyAdapter();
+    private ListAdapter mMyAdapter = new ListAdapter();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,42 +32,41 @@ public class PlayListActivity extends AppCompatActivity {
 
 
         mBinding.playList.setLayoutManager(new LinearLayoutManager(this));
+        mBinding.playList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mBinding.playList.setAdapter(mMyAdapter);
 
         if (!SAMPlayer.getInstance().getServiceSession().isConnect()) {
             Toast.makeText(this, "服务没有连接", Toast.LENGTH_SHORT).show();
         } else {
-            //SAMPlayer.getInstance().getPlayer().get
+            List<SongInfo> playList = SAMPlayer.getInstance().getPlayer().getPlayList();
+            mMyAdapter.setNewData(playList);
         }
+
+        mMyAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+            }
+        });
+        mMyAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+
+            }
+        });
+
     }
 
+    private class ListAdapter extends BaseQuickAdapter<SongInfo, BaseViewHolder> {
 
-    private class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-
-
-        @NonNull
-        @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            View inflate = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.item_play_list, viewGroup, false);
-            return new MyViewHolder(inflate);
+        public ListAdapter() {
+            super(R.layout.item_play_list);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return 0;
-        }
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-
-            public MyViewHolder(@NonNull View itemView) {
-                super(itemView);
-            }
+        protected void convert(BaseViewHolder helper, SongInfo item) {
+            helper.setText(R.id.item_song_name, item.getSongName());
+            helper.addOnClickListener(R.id.item_del);
         }
     }
 

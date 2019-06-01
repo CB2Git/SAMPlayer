@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
 
     <TextView
+        android:id="@+id/item_song_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="当前" />
+        android:layout_marginEnd="10dp"
+        android:text="当前"
+        android:visibility="gone" />
 
     <TextView
+        android:id="@+id/item_song_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="音频名字" />
+        android:text="音频名字"
+        android:textSize="16sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/item_del"
+        android:layout_width="25sp"
+        android:layout_height="25sp"
+        android:layout_marginEnd="5dp"
+        android:padding="4dp"
+        android:src="@mipmap/ic_del"
         android:text="删除" />
 </LinearLayout>

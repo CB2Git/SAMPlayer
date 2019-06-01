@@ -32,8 +32,9 @@ dependencies {
     testImplementation "junit:junit:${versions.junit}"
     androidTestImplementation "com.android.support.test:runner:${versions.runner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso_core}"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
+    implementation "com.android.support:recyclerview-v7:${versions.v7}"
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
 
     implementation project(':samplayer_java')
     implementation project(':samplayer_exo')

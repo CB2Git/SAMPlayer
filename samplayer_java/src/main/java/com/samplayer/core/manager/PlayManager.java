@@ -17,6 +17,7 @@ import com.samplayer.model.PlayMode;
 import com.samplayer.model.SongInfo;
 import com.samplayer.utils.SAMLog;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -49,6 +50,7 @@ public class PlayManager implements IPlayer, IReleaseAble {
 
     private static final int MSG_INTERCEPTOR_PROCESS = 10;
 
+    //默认自动连接
     private boolean mAutoConnect = true;
 
     private IServiceSession mServiceSession;
@@ -132,6 +134,18 @@ public class PlayManager implements IPlayer, IReleaseAble {
                 SAMLog.printCause(e);
             }
         }
+    }
+
+    @Override
+    public List<SongInfo> getPlayList() {
+        if (checkRemoteService()) {
+            try {
+                return mServiceSession.getRemoteService().getPlayList();
+            } catch (Exception e) {
+                SAMLog.printCause(e);
+            }
+        }
+        return Collections.emptyList();
     }
 
     @Override

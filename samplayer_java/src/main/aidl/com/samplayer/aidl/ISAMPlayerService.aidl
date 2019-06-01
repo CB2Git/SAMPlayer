@@ -21,6 +21,10 @@ interface ISAMPlayerService {
      */
     void appendPlayList(in List<SongInfo> songInfos);
 
+    /**
+     * 获取播放列表
+     */
+    List<SongInfo> getPlayList();
 
     /**
      * 清空播放列表

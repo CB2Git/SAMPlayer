@@ -37,6 +37,11 @@ public interface IPlayer {
     void appendPlayList(List<SongInfo> songInfos);
 
     /**
+     * 获取播放列表
+     */
+    List<SongInfo> getPlayList();
+
+    /**
      * 清空播放列表  会导致停止当前播放并回调{@link IPlayerListener#onStop()}
      */
     void clearPlayList();

@@ -319,7 +319,11 @@ public class SAMPlayerService extends Service {
     }
 
 
-    public void clearPlayList() throws RemoteException {
+    public List<SongInfo> getPlayList() {
+        return mPlayQueueManager.getPlayList();
+    }
+
+    public void clearPlayList() {
         mPlayQueueManager.clearPlayList();
         stop();
     }
