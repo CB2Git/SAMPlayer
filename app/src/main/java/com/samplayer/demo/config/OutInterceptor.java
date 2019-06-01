@@ -5,6 +5,9 @@ import com.samplayer.model.SongInfo;
 import com.samplayer.outconfig.InterceptorConfig;
 import com.samplayer.utils.SAMLog;
 
+/**
+ * 注意这个玩意在播放进程
+ */
 public class OutInterceptor implements InterceptorConfig {
 
     private static final String TAG = "Interceptor";

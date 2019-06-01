@@ -6,8 +6,8 @@ import com.samplayer.SMAManager;
 import com.samplayer.core.remote.player.PlayerFactory;
 import com.samplayer.demo.config.OutInterceptor;
 import com.samplayer.demo.config.OutNotificationConfig;
+import com.samplayer.demo.config.RemotePlayListener;
 import com.samplayer.exo.ExoPlayManager;
-import com.samplayer.ijk.IJKPlayManager;
 import com.samplayer.outconfig.OutConfigFactory;
 
 public class App extends Application {
@@ -30,7 +30,7 @@ public class App extends Application {
         //设置通知栏的实现  需要注意的是此类运行运行在播放进程
         OutConfigFactory.setNotificationConfig(OutNotificationConfig.class);
 
-        //TODO
-        OutConfigFactory.setPlayerListener(null);
+        //将此监听设置在播放进程 实现播放历史、流水上报推荐使用这个监听
+        OutConfigFactory.setPlayerListener(RemotePlayListener.class);
     }
 }

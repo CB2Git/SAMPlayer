@@ -10,12 +10,22 @@ import com.samplayer.outconfig.OutConfigFactory;
 
 public class OutConfigInfo {
 
+    /**
+     * 拦截器
+     */
     @Nullable
     private InterceptorConfig mInterceptorConfig;
 
+    /**
+     * 通知栏
+     */
     @Nullable
     private NotificationConfig mNotificationConfig;
 
+    /**
+     * 播放监听
+     */
+    @Nullable
     private IPlayerListener mPlayerListener;
 
     public OutConfigInfo() {
@@ -25,6 +35,7 @@ public class OutConfigInfo {
     public void inject(Context context) {
         mInterceptorConfig = OutConfigFactory.createInterceptorConfig();
         mNotificationConfig = OutConfigFactory.createNotificationConfig();
+        mPlayerListener = OutConfigFactory.createPlayerListener();
         if (mNotificationConfig != null) {
             mNotificationConfig.init(context);
         }
@@ -38,5 +49,10 @@ public class OutConfigInfo {
     @Nullable
     public NotificationConfig getNotificationConfig() {
         return mNotificationConfig;
+    }
+
+    @Nullable
+    public IPlayerListener getPlayerListener() {
+        return mPlayerListener;
     }
 }

@@ -22,6 +22,7 @@ import com.samplayer.core.manager.circulation.SingleCirculationMode;
 import com.samplayer.core.remote.player.PlayerFactory;
 import com.samplayer.core.remote.player.base.IPlayManager;
 import com.samplayer.core.remote.player.cmd.CmdHandlerHelper;
+import com.samplayer.listener.IPlayerListener;
 import com.samplayer.model.OutConfigInfo;
 import com.samplayer.model.PlayMode;
 import com.samplayer.model.SongInfo;
@@ -111,7 +112,7 @@ public class SAMPlayerService extends Service {
         IntentFilter intentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(mAudioStreamReceiver, intentFilter);
 
-        //通过反射获取配置
+        //获取配置信息
         mOutConfigInfo.inject(this);
 
         if (mOutConfigInfo.getInterceptorConfig() != null) {
@@ -481,6 +482,16 @@ public class SAMPlayerService extends Service {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        notifyOutProgressChange(info, position, duration);
+    }
+
+    private void notifyOutProgressChange(SongInfo info, long position, long duration) {
+        if (duration < 0) {
+            duration = 0;
+        }
+        if (mOutConfigInfo.getPlayerListener() != null) {
+            mOutConfigInfo.getPlayerListener().onProgressChange(info, position / 1000, duration / 1000);
+        }
     }
 
     private void notifyError(int what, int extra) {
@@ -491,6 +502,14 @@ public class SAMPlayerService extends Service {
                 e.printStackTrace();
             }
         }
+        notifyOutError(what, extra);
+    }
+
+    private void notifyOutError(int what, int extra) {
+        IPlayerListener listener = mOutConfigInfo.getPlayerListener();
+        if (listener != null) {
+            listener.onError(what, extra);
+        }
     }
 
     private void notifyComplete() {
@@ -500,6 +519,14 @@ public class SAMPlayerService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        notifyOutComplete();
+    }
+
+    private void notifyOutComplete() {
+        IPlayerListener listener = mOutConfigInfo.getPlayerListener();
+        if (listener != null) {
+            listener.onComplete();
         }
     }
 
@@ -512,6 +539,14 @@ public class SAMPlayerService extends Service {
                 e.printStackTrace();
             }
         }
+        notifyOutPlayableStart(songInfo);
+    }
+
+    private void notifyOutPlayableStart(SongInfo songInfo) {
+        IPlayerListener listener = mOutConfigInfo.getPlayerListener();
+        if (listener != null) {
+            listener.onPlayableStart(songInfo);
+        }
     }
 
     private void notifyBufferStart() {
@@ -521,6 +556,14 @@ public class SAMPlayerService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        notifyOutBufferStart();
+    }
+
+    private void notifyOutBufferStart() {
+        IPlayerListener playerListener = mOutConfigInfo.getPlayerListener();
+        if (playerListener != null) {
+            playerListener.onInBuffer(true);
         }
     }
 
@@ -532,6 +575,14 @@ public class SAMPlayerService extends Service {
                 e.printStackTrace();
             }
         }
+        notifyOutBufferEnd();
+    }
+
+    private void notifyOutBufferEnd() {
+        IPlayerListener playerListener = mOutConfigInfo.getPlayerListener();
+        if (playerListener != null) {
+            playerListener.onInBuffer(false);
+        }
     }
 
     private void notifyBufferingUpdate(int percent) {
@@ -541,6 +592,13 @@ public class SAMPlayerService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        notifyOutBufferingUpdate(percent);
+    }
+
+    private void notifyOutBufferingUpdate(int percent) {
+        if (mOutConfigInfo.getPlayerListener() != null) {
+            mOutConfigInfo.getPlayerListener().onBufferProgress(percent);
         }
     }
 
@@ -552,6 +610,14 @@ public class SAMPlayerService extends Service {
                 e.printStackTrace();
             }
         }
+        notifyOutPause();
+    }
+
+    private void notifyOutPause() {
+        IPlayerListener listener = mOutConfigInfo.getPlayerListener();
+        if (listener != null) {
+            listener.onPause();
+        }
     }
 
     private void notifyStart() {
@@ -561,6 +627,14 @@ public class SAMPlayerService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        notifyOutStart();
+    }
+
+    private void notifyOutStart() {
+        IPlayerListener listener = mOutConfigInfo.getPlayerListener();
+        if (listener != null) {
+            listener.onStart();
         }
     }
 
@@ -572,6 +646,14 @@ public class SAMPlayerService extends Service {
                 e.printStackTrace();
             }
         }
+        notifyOutStop();
+    }
+
+    private void notifyOutStop() {
+        IPlayerListener listener = mOutConfigInfo.getPlayerListener();
+        if (listener != null) {
+            listener.onStop();
+        }
     }
 
     private void notifyInterceptorProcess() {
@@ -581,6 +663,14 @@ public class SAMPlayerService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        notifyOutInterceptorProcess();
+    }
+
+    private void notifyOutInterceptorProcess() {
+        IPlayerListener listener = mOutConfigInfo.getPlayerListener();
+        if (listener != null) {
+            listener.inInterceptorProcess();
         }
     }
 

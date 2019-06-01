@@ -8,7 +8,6 @@ import java.util.Random;
 /**
  * 随机播放
  */
-//TODO 随机播放的算法需要改改   随机到同一个要怎么办
 public class ShuffleCirculationMode implements ICirculationMode {
 
     private Random mRandom;
@@ -25,9 +24,18 @@ public class ShuffleCirculationMode implements ICirculationMode {
             if (size > 0) {
                 return mRandom.nextInt(size);
             }
+            //没数据直接返回
             return currentIndex;
         } else {
-            return mRandom.nextInt(size);
+            //只有一个
+            if (size == 1) {
+                return currentIndex;
+            }
+            int nextInt;
+            do {
+                nextInt = mRandom.nextInt(size);
+            } while (nextInt == currentIndex);
+            return nextInt;
         }
     }
 
