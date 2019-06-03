@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.samplayer.utils.SAMLog;
 
-public class SMAManager {
+public class SMAConfig {
 
     private static final String TAG = "SMAManager";
 

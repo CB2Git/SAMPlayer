@@ -55,13 +55,20 @@ public interface IPlayQueue {
     /**
      * 删除指定位置的音乐
      * <p>
+     *
+     * @return 被删除的音乐信息  如果为null 表示删除失败或者不存在
      */
-    void removeAt(int index);
+    @Nullable
+    SongInfo removeAt(int index);
 
     /**
      * 删除指定的音乐
+     * <p>
+     *
+     * @return 被删除的音乐信息  如果为null 表示删除失败或者不存在
      */
-    void removeItem(SongInfo songInfo);
+    @Nullable
+    SongInfo removeItem(SongInfo songInfo);
 
     /**
      * 下一首

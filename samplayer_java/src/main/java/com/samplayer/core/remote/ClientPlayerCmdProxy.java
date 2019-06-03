@@ -51,17 +51,19 @@ public class ClientPlayerCmdProxy extends ISAMPlayerService.Stub {
     }
 
     @Override
-    public void removeAt(int index) throws RemoteException {
+    public boolean removeAt(int index) throws RemoteException {
         if (mSAMPlayerService != null) {
-            mSAMPlayerService.removeAt(index);
+            return mSAMPlayerService.removeAt(index);
         }
+        return false;
     }
 
     @Override
-    public void removeItem(SongInfo songInfo) throws RemoteException {
+    public boolean removeItem(SongInfo songInfo) throws RemoteException {
         if (mSAMPlayerService != null) {
-            mSAMPlayerService.removeItem(songInfo);
+            return mSAMPlayerService.removeItem(songInfo);
         }
+        return false;
     }
 
     @Override

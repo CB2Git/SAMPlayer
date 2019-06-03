@@ -9,14 +9,14 @@ import com.samplayer.model.SongInfo;
 public interface InterceptorCallback {
 
     /**
-     * 处理完毕可以播放
+     * 处理完毕可以播放  可以在非主线程调用
      *
      * @param info
      */
     void onContinue(SongInfo info);
 
     /**
-     * 直接报错
+     * 直接报错  会回调{@link IPlayerListener#onError(int, int)}
      *
      * @param errorCode 错误码
      */

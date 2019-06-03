@@ -24,7 +24,7 @@ public interface IPlayer {
     /**
      * 设置播放列表
      * <p>
-     * 清空当前播放列表并停止当前播放
+     * 会清空当前播放列表并停止当前播放的
      *
      * @param songInfos 新的播放队列
      * @param autoPlay  true 自动播放队列第一首
@@ -49,12 +49,12 @@ public interface IPlayer {
     /**
      * 删除指定位置的音乐  如果正在播放  那么会直接停止播放
      */
-    void removeAt(int index);
+    boolean removeAt(int index);
 
     /**
      * 删除指定的音乐 如果正在播放  那么会直接停止播放
      */
-    void removeItem(SongInfo songInfo);
+    boolean removeItem(SongInfo songInfo);
 
     /**
      * 播放

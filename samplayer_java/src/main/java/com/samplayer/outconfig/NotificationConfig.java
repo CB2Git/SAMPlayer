@@ -114,9 +114,9 @@ public abstract class NotificationConfig extends BroadcastReceiver {
      * @param context
      * @param action
      */
-    protected PendingIntent getPendingIntentWithAction(Context context, String action) {
+    protected PendingIntent getPendingBroadcastWithAction(Context context, String action) {
         Intent intent = new Intent(action);
-        return PendingIntent.getBroadcast(context, 1000, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        return PendingIntent.getBroadcast(context, 1000, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override

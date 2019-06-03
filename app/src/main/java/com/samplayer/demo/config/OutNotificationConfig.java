@@ -3,7 +3,9 @@ package com.samplayer.demo.config;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -65,6 +67,12 @@ public class OutNotificationConfig extends com.samplayer.outconfig.NotificationC
 
         mBuilder.setContent(buildView(context, info, true));
         mBuilder.setCustomBigContentView(buildBigView(context, info, true, false));
+
+        //点击通知栏跳转
+        Intent launchIntentForPackage = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+        PendingIntent clickIntent = PendingIntent.getActivity(context, 0, launchIntentForPackage, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        mBuilder.setContentIntent(clickIntent);
         return mBuilder.build();
     }
 
@@ -97,10 +105,10 @@ public class OutNotificationConfig extends com.samplayer.outconfig.NotificationC
         remoteView.setImageViewResource(R.id.ntf_statue, isPlay ? R.mipmap.ic_pause : R.mipmap.ic_play);
 
 
-        remoteView.setOnClickPendingIntent(R.id.ntf_statue, getPendingIntentWithAction(context, ACTION_SAM_TOGGLE));
-        remoteView.setOnClickPendingIntent(R.id.ntf_next, getPendingIntentWithAction(context, ACTION_SAM_NEXT));
-        remoteView.setOnClickPendingIntent(R.id.ntf_pre, getPendingIntentWithAction(context, ACTION_SAM_PREVIOUS));
-        remoteView.setOnClickPendingIntent(R.id.ntf_close, getPendingIntentWithAction(context, ACTION_SAM_STOP));
+        remoteView.setOnClickPendingIntent(R.id.ntf_statue, getPendingBroadcastWithAction(context, ACTION_SAM_TOGGLE));
+        remoteView.setOnClickPendingIntent(R.id.ntf_next, getPendingBroadcastWithAction(context, ACTION_SAM_NEXT));
+        remoteView.setOnClickPendingIntent(R.id.ntf_pre, getPendingBroadcastWithAction(context, ACTION_SAM_PREVIOUS));
+        remoteView.setOnClickPendingIntent(R.id.ntf_close, getPendingBroadcastWithAction(context, ACTION_SAM_STOP));
         return remoteView;
     }
 
@@ -108,15 +116,15 @@ public class OutNotificationConfig extends com.samplayer.outconfig.NotificationC
         RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.notifycation_big_layout);
         remoteView.setTextViewText(R.id.ntf_title, info.getSongName());
         remoteView.setTextViewText(R.id.ntf_singer, info.getArtist());
-        remoteView.setTextViewText(R.id.ntf_like, like ? "喜欢！！" : "点我试试");
-        remoteView.setImageViewResource(R.id.ntf_statue, isPlay ? R.mipmap.ic_pause : R.mipmap.ic_play);
+        remoteView.setTextViewText(R.id.ntf_like, like ? "被点击了" : "点我试试");
+        remoteView.setImageViewResource(R.id.ntf_statue_big, isPlay ? R.mipmap.ic_pause : R.mipmap.ic_play);
 
-
-        remoteView.setOnClickPendingIntent(R.id.ntf_statue, getPendingIntentWithAction(context, ACTION_SAM_TOGGLE));
-        remoteView.setOnClickPendingIntent(R.id.ntf_next, getPendingIntentWithAction(context, ACTION_SAM_NEXT));
-        remoteView.setOnClickPendingIntent(R.id.ntf_pre, getPendingIntentWithAction(context, ACTION_SAM_PREVIOUS));
-        remoteView.setOnClickPendingIntent(R.id.ntf_close, getPendingIntentWithAction(context, ACTION_SAM_STOP));
-        remoteView.setOnClickPendingIntent(R.id.ntf_like, getPendingIntentWithAction(context, ACTION_MY_XIA_XIE_DE));
+        //这个地方的id不能和小布局里面一样 不然会导致同一id的只有后设置的一个能响应
+        remoteView.setOnClickPendingIntent(R.id.ntf_statue_big, getPendingBroadcastWithAction(context, ACTION_SAM_TOGGLE));
+        remoteView.setOnClickPendingIntent(R.id.ntf_next_big, getPendingBroadcastWithAction(context, ACTION_SAM_NEXT));
+        remoteView.setOnClickPendingIntent(R.id.ntf_pre_big, getPendingBroadcastWithAction(context, ACTION_SAM_PREVIOUS));
+        remoteView.setOnClickPendingIntent(R.id.ntf_close_big, getPendingBroadcastWithAction(context, ACTION_SAM_STOP));
+        remoteView.setOnClickPendingIntent(R.id.ntf_like, getPendingBroadcastWithAction(context, ACTION_MY_XIA_XIE_DE));
         return remoteView;
     }
 }

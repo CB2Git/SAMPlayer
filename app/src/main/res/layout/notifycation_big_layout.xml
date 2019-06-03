@@ -25,15 +25,15 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-
             <TextView
                 android:id="@+id/ntf_singer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="#0f0f0f"
                 android:textSize="15sp"
                 tools:text="歌手名字" />
-
 
             <TextView
                 android:id="@+id/ntf_title"
@@ -46,9 +46,8 @@
 
         </LinearLayout>
 
-
         <ImageView
-            android:id="@+id/ntf_pre"
+            android:id="@+id/ntf_pre_big"
             android:layout_width="37dp"
             android:layout_height="30dp"
             android:background="?android:attr/selectableItemBackground"
@@ -58,7 +57,7 @@
             android:src="@mipmap/ic_pre" />
 
         <ImageView
-            android:id="@+id/ntf_statue"
+            android:id="@+id/ntf_statue_big"
             android:layout_width="50dp"
             android:layout_height="30dp"
             android:background="?android:attr/selectableItemBackground"
@@ -66,7 +65,7 @@
             android:src="@mipmap/ic_pause" />
 
         <ImageView
-            android:id="@+id/ntf_next"
+            android:id="@+id/ntf_next_big"
             android:layout_width="37dp"
             android:layout_height="30dp"
             android:background="?android:attr/selectableItemBackground"
@@ -76,7 +75,7 @@
             android:src="@mipmap/ic_next" />
 
         <ImageView
-            android:id="@+id/ntf_close"
+            android:id="@+id/ntf_close_big"
             android:layout_width="33dp"
             android:layout_height="30dp"
             android:background="?android:attr/selectableItemBackground"

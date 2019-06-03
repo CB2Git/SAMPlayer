@@ -24,6 +24,8 @@
             android:id="@+id/ntf_singer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="#0f0f0f"
             android:textSize="15sp"
             tools:text="歌手名字" />

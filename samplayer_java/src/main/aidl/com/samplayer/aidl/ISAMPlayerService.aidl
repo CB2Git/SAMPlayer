@@ -34,12 +34,12 @@ interface ISAMPlayerService {
     /**
      * 删除指定位置的音乐  如果正在播放  那么会直接停止播放
      */
-    void removeAt(int index);
+    boolean removeAt(int index);
 
     /**
      * 删除指定的音乐 如果正在播放  那么会直接停止播放
      */
-    void removeItem(in SongInfo songInfo);
+    boolean removeItem(in SongInfo songInfo);
 
     /**
      * 播放

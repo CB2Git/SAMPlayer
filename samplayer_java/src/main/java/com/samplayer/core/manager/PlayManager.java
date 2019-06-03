@@ -90,7 +90,7 @@ public class PlayManager implements IPlayer, IReleaseAble {
 
             @Override
             public void onServiceDisconnect(boolean isError) {
-                //服务断开连接了 可以在这里试试重新连接
+                //这里想做些什么操作呢~~
             }
         };
         return mServiceSessionListener;
@@ -160,25 +160,27 @@ public class PlayManager implements IPlayer, IReleaseAble {
     }
 
     @Override
-    public void removeAt(int index) {
+    public boolean removeAt(int index) {
         if (checkRemoteService()) {
             try {
-                mServiceSession.getRemoteService().removeAt(index);
+                return mServiceSession.getRemoteService().removeAt(index);
             } catch (Exception e) {
                 SAMLog.printCause(e);
             }
         }
+        return false;
     }
 
     @Override
-    public void removeItem(SongInfo songInfo) {
+    public boolean removeItem(SongInfo songInfo) {
         if (checkRemoteService()) {
             try {
-                mServiceSession.getRemoteService().removeItem(songInfo);
+                return mServiceSession.getRemoteService().removeItem(songInfo);
             } catch (Exception e) {
                 SAMLog.printCause(e);
             }
         }
+        return false;
     }
 
     @Override
@@ -429,6 +431,9 @@ public class PlayManager implements IPlayer, IReleaseAble {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if (mServiceSession == null || !mServiceSession.isConnect()) {
+                return;
+            }
             switch (msg.what) {
                 case MSG_PLAYABLE_START:
                     handlerPlayableStartEvent((SongInfo) msg.obj);

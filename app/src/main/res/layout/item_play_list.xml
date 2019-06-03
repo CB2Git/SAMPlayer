@@ -9,18 +9,20 @@
     android:paddingTop="12dp"
     android:paddingBottom="12dp">
 
-    <TextView
+    <ImageView
         android:id="@+id/item_song_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="5dp"
         android:layout_marginEnd="10dp"
-        android:text="当前"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:src="@mipmap/ic_playing" />
 
     <TextView
         android:id="@+id/item_song_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
         android:layout_weight="1"
         android:text="音频名字"
         android:textSize="16sp" />

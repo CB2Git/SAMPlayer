@@ -62,25 +62,27 @@ public class PlayQueueManager implements IPlayQueue {
         return mSongInfos;
     }
 
+    @Nullable
     @Override
-    public void removeAt(int index) {
+    public SongInfo removeAt(int index) {
         //越界直接警告
         if (index < 0 || index >= mSongInfos.size()) {
             SAMLog.w(TAG, "mIndex out of bound");
-            return;
+            return null;
         }
-        removeItem(mSongInfos.get(index));
+        return removeItem(mSongInfos.get(index));
     }
 
+    @Nullable
     @Override
-    public void removeItem(SongInfo songInfo) {
+    public SongInfo removeItem(SongInfo songInfo) {
         int indexOf = mSongInfos.indexOf(songInfo);
         if (indexOf == -1) {
             SAMLog.w(TAG, "removeItem: this list contained the specified element");
-            return;
+            return null;
         }
-        mSongInfos.remove(indexOf);
         //删除列表元素
+        SongInfo remove = mSongInfos.remove(indexOf);
 
         //如果删除的是正在播放的
         if (indexOf == mIndex) {
@@ -97,6 +99,7 @@ public class PlayQueueManager implements IPlayQueue {
         else if (indexOf < mIndex) {
             mIndex--;
         }
+        return remove;
     }
 
     @Nullable
@@ -112,7 +115,7 @@ public class PlayQueueManager implements IPlayQueue {
     @Nullable
     @Override
     public SongInfo skipTo(int index) {
-        if (index >= 0 && index < mSongInfos.size()) {
+        if (index < 0 || index >= mSongInfos.size()) {
             return null;
         }
         return mSongInfos.get(index);

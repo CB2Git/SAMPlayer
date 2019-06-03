@@ -51,7 +51,7 @@ public class SAMPlayerService extends Service {
     /**
      * 播放器管理类
      */
-    private IPlayManager mIPlayManager;
+    private IPlayManager mPlayerManager;
 
     /**
      * 播放队列管理
@@ -102,9 +102,9 @@ public class SAMPlayerService extends Service {
         //播放队列
         mPlayQueueManager = new PlayQueueManager();
         //播放器
-        mIPlayManager = PlayerFactory.create(this);
+        mPlayerManager = PlayerFactory.create(this);
         //播放器监听
-        mIPlayManager.setPlayListener(getOnPlayListener());
+        mPlayerManager.setPlayListener(getOnPlayListener());
 
         //播放命令监听
         CmdHandlerHelper.init(getCmdHandler());
@@ -117,7 +117,7 @@ public class SAMPlayerService extends Service {
 
         if (mOutConfigInfo.getInterceptorConfig() != null) {
             //拦截器
-            mIPlayManager.setInterceptor(mOutConfigInfo.getInterceptorConfig());
+            mPlayerManager.setInterceptor(mOutConfigInfo.getInterceptorConfig());
         }
 
     }
@@ -141,7 +141,7 @@ public class SAMPlayerService extends Service {
         //停止播放
         stop();
         //释放播放器
-        mIPlayManager.release();
+        mPlayerManager.release();
         //通知栏释放
         NotificationConfig notificationConfig = mOutConfigInfo.getNotificationConfig();
         if (notificationConfig != null) {
@@ -159,8 +159,8 @@ public class SAMPlayerService extends Service {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            IMediaPlayer currentPlayer = mIPlayManager.getCurrentPlayer();
-            SongInfo currentPlayInfo = mIPlayManager.getCurrentPlayInfo();
+            IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
+            SongInfo currentPlayInfo = mPlayerManager.getCurrentPlayInfo();
             long duration = currentPlayer.getDuration();
             long currentPosition = currentPlayer.getCurrentPosition();
             notifyProgressChange(currentPlayInfo, currentPosition, duration);
@@ -282,7 +282,7 @@ public class SAMPlayerService extends Service {
      * 暂停播放
      */
     private void pause() {
-        IMediaPlayer currentPlayer = mIPlayManager.getCurrentPlayer();
+        IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         if (currentPlayer.isPlaying()) {
             currentPlayer.pause();
             //TODO 这里在暂停的时候是否继续回调需要考虑
@@ -296,7 +296,7 @@ public class SAMPlayerService extends Service {
      * 继续播放
      */
     private void start() {
-        IMediaPlayer currentPlayer = mIPlayManager.getCurrentPlayer();
+        IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         if (!currentPlayer.isPlaying()) {
             currentPlayer.start();
             mHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
@@ -307,6 +307,11 @@ public class SAMPlayerService extends Service {
 
 
     public void setPlayList(List<SongInfo> songInfos, boolean autoPlay) throws RemoteException {
+        SongInfo currentPlayInfo = mPlayerManager.getCurrentPlayInfo();
+        if (currentPlayInfo != null) {
+            stop();
+        }
+
         mPlayQueueManager.setPlayList(songInfos);
         if (autoPlay) {
             play();
@@ -329,15 +334,26 @@ public class SAMPlayerService extends Service {
     }
 
 
-    public void removeAt(int index) {
-        //TODO
-        mPlayQueueManager.removeAt(index);
+    public boolean removeAt(int index) {
+        SongInfo songInfo = mPlayQueueManager.removeAt(index);
+        SongInfo currentPlayInfo = mPlayerManager.getCurrentPlayInfo();
+        //如果正在播放的被删除了 停止播放
+        if (currentPlayInfo != null && currentPlayInfo.equals(songInfo)) {
+            stop();
+            return true;
+        }
+        return songInfo != null;
     }
 
-
-    public void removeItem(SongInfo songInfo) {
-        mPlayQueueManager.removeItem(songInfo);
-        //TODO
+    public boolean removeItem(SongInfo songInfo) {
+        SongInfo info = mPlayQueueManager.removeItem(songInfo);
+        SongInfo currentPlayInfo = mPlayerManager.getCurrentPlayInfo();
+        //如果正在播放的被删除了 停止播放
+        if (currentPlayInfo != null && currentPlayInfo.equals(info)) {
+            stop();
+            return true;
+        }
+        return songInfo != null;
     }
 
     /**
@@ -348,7 +364,7 @@ public class SAMPlayerService extends Service {
         if (current == null) {
             SAMLog.e(TAG, "play: 播放失败  歌曲信息为null");
         } else {
-            mIPlayManager.play(current, false);
+            mPlayerManager.play(current, false);
         }
     }
 
@@ -387,12 +403,12 @@ public class SAMPlayerService extends Service {
 
 
     public boolean isPlaying() {
-        return mIPlayManager.getCurrentPlayer().isPlaying();
+        return mPlayerManager.getCurrentPlayer().isPlaying();
     }
 
 
     public void stop() {
-        mIPlayManager.stop();
+        mPlayerManager.stop();
         mHandler.removeCallbacksAndMessages(null);
         stopForeground(true);
         notifyStop();
@@ -400,32 +416,32 @@ public class SAMPlayerService extends Service {
 
 
     public void seekTo(long ms) {
-        IMediaPlayer currentPlayer = mIPlayManager.getCurrentPlayer();
+        IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         currentPlayer.seekTo(ms);
     }
 
 
     public long getCurrentPosition() throws RemoteException {
-        IMediaPlayer currentPlayer = mIPlayManager.getCurrentPlayer();
+        IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         long currentPosition = currentPlayer.getCurrentPosition();
         return currentPosition;
     }
 
 
     public long getDuration() throws RemoteException {
-        IMediaPlayer currentPlayer = mIPlayManager.getCurrentPlayer();
+        IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         long duration = currentPlayer.getDuration();
         return duration;
     }
 
 
     public SongInfo getCurrentPlayable() throws RemoteException {
-        return mIPlayManager.getCurrentPlayInfo();
+        return mPlayerManager.getCurrentPlayInfo();
     }
 
 
     public void toggle() {
-        IMediaPlayer currentPlayer = mIPlayManager.getCurrentPlayer();
+        IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         if (currentPlayer.isPlaying()) {
             pause();
         } else {
@@ -437,7 +453,7 @@ public class SAMPlayerService extends Service {
     public void next() {
         SongInfo songInfo = mPlayQueueManager.next();
         if (songInfo != null) {
-            mIPlayManager.play(songInfo);
+            mPlayerManager.play(songInfo);
         }
     }
 
@@ -445,14 +461,14 @@ public class SAMPlayerService extends Service {
     public void previous() {
         SongInfo songInfo = mPlayQueueManager.previous();
         if (songInfo != null) {
-            mIPlayManager.play(songInfo);
+            mPlayerManager.play(songInfo);
         }
     }
 
 
     public void skipTo(int index) {
         SongInfo songInfo = mPlayQueueManager.skipTo(index);
-        mIPlayManager.play(songInfo);
+        mPlayerManager.play(songInfo);
     }
 
 

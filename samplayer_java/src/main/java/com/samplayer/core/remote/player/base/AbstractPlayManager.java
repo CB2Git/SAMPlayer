@@ -2,6 +2,9 @@ package com.samplayer.core.remote.player.base;
 
 import android.content.Context;
 import android.media.AudioManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
 
 import com.samplayer.core.remote.player.AudioFocusManager;
@@ -16,6 +19,8 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnInfoListener, IMediaPlayer.OnErrorListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnCompletionListener {
 
     private static final String TAG = "AbstractPlayManager";
+
+    private static final int MSG_REAL_PLAY = 1000;
 
     /**
      * 拦截器  用与在播放之前允许用户去重设播放地址
@@ -46,6 +51,19 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
      * 拦截器回调的包装
      */
     private InterceptorCallbackWrapper mCallbackWrapper;
+
+    /**
+     * 将播放线程切换到主线程  这么做的原因是EXO播放器的setDataSource必须在主线程调用
+     */
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == MSG_REAL_PLAY) {
+                realPlay((SongInfo) msg.obj);
+            }
+        }
+    };
 
     public AbstractPlayManager(Context context) {
         mAudioFocusManager = new AudioFocusManager(context);
@@ -98,7 +116,8 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             mCallbackWrapper = new InterceptorCallbackWrapper(new InterceptorCallback() {
                 @Override
                 public void onContinue(SongInfo info) {
-                    realPlay(info);
+                    mHandler.removeCallbacksAndMessages(null);
+                    mHandler.obtainMessage(MSG_REAL_PLAY, info).sendToTarget();
                 }
 
                 @Override
@@ -118,13 +137,15 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             });
             mInterceptorConfig.action(songInfo, mCallbackWrapper);
         } else {
-            realPlay(songInfo);
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler.obtainMessage(MSG_REAL_PLAY, songInfo).sendToTarget();
         }
     }
 
     private void realPlay(SongInfo info) {
         IMediaPlayer newPlayer = getNewPlayer();
         try {
+            //注意 如果使用exo播放器 这里必须在主线程中初始化
             newPlayer.setDataSource(info.getSongUrl());
             newPlayer.prepareAsync();
             mSongInfo = info;
