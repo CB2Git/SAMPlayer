@@ -34,7 +34,7 @@ dependencies {
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso_core}"
     implementation "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
     implementation "com.android.support:recyclerview-v7:${versions.v7}"
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
+    implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
 
     implementation project(':samplayer_java')
     implementation project(':samplayer_exo')

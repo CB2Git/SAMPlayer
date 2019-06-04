@@ -1,4 +1,4 @@
-package com.samplayer.core.remote.player;
+package com.samplayer.core.remote.player.cmd;
 
 import android.content.ComponentName;
 import android.content.Context;

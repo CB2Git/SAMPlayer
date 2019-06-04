@@ -5,7 +5,7 @@ import android.os.Message;
 
 /**
  * 用与接收外部发送的控制命令 然后进行转发
- * 比如{@link com.samplayer.core.remote.player.AudioFocusManager}发出的焦点事件
+ * 比如{@link AudioFocusManager}发出的焦点事件
  * 比如{@link MediaButtonReceiver}发出的线控事件
  */
 public class CmdHandlerHelper {

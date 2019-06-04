@@ -70,6 +70,10 @@ public class OutNotificationConfig extends com.samplayer.outconfig.NotificationC
 
         //点击通知栏跳转
         Intent launchIntentForPackage = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+        //https://juejin.im/post/5c36f666e51d45513236f081
+        if (launchIntentForPackage != null) {
+            launchIntentForPackage.setPackage(null);
+        }
         PendingIntent clickIntent = PendingIntent.getActivity(context, 0, launchIntentForPackage, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mBuilder.setContentIntent(clickIntent);

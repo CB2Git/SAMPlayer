@@ -7,7 +7,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 
-import com.samplayer.core.remote.player.AudioFocusManager;
+import com.samplayer.core.remote.player.cmd.AudioFocusManager;
 import com.samplayer.core.remote.player.interceptor.InterceptorCallback;
 import com.samplayer.core.remote.player.interceptor.InterceptorCallbackWrapper;
 import com.samplayer.model.SongInfo;
