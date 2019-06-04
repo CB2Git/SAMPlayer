@@ -118,6 +118,7 @@ public class PlayQueueManager implements IPlayQueue {
         if (index < 0 || index >= mSongInfos.size()) {
             return null;
         }
+        mIndex = index;
         return mSongInfos.get(index);
     }
 
