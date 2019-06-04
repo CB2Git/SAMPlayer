@@ -297,7 +297,8 @@ public class SAMPlayerService extends Service {
      */
     private void start() {
         IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
-        if (!currentPlayer.isPlaying()) {
+        //当没有播放任何音乐的时候不能开始
+        if (mPlayerManager.getCurrentPlayInfo() != null && !currentPlayer.isPlaying()) {
             currentPlayer.start();
             mHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
             notifyStart();
