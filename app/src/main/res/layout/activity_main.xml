@@ -172,7 +172,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="onClick"
-                    android:text="添加播放列表" />
+                    android:text="添加错误播放列表" />
 
                 <Button
                     android:id="@+id/ctrl_show_play_list"

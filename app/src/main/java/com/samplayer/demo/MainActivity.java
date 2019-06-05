@@ -337,28 +337,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<SongInfo> generateSongInfo2() {
         SongInfo info = new SongInfo();
         info.setSongId("11");
-        info.setArtist("周杰伦");
-        info.setSongName("七里香");
-        info.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/cb58e961691ecc1aa6fe49247dccb707/599624578/274085190800128.mp3?xcode=97d3a67b685bf1cb180b9e6dd2675aac");
+        info.setArtist("无法播放1");
+        info.setSongName("无法播放1");
+        info.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/cb58e961691ecc1aa6fe49247dccb707/599624578/274085190800128.mp3");
 
 
         SongInfo info1 = new SongInfo();
         info1.setSongId("22");
-        info1.setArtist("周杰伦");
-        info1.setSongName("超人不会飞2");
-        info1.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/234c66c6c782f0156c085bd2076900fc/599642326/21738664800128.mp3?xcode=0374eb40403dfbd76a37d80a2c02fc5b");
-
-        SongInfo info2 = new SongInfo();
-        info2.setSongId("33");
-        info2.setArtist("周杰伦");
-        info2.setSongName("蒲公英的约定2");
-        info2.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/9b252e201b1519c2c2b69b58e1c56559/599641483/219957248400128.mp3?xcode=e3cb462e57b02c839d88bb873c3ec0e5");
-
+        info1.setArtist("无法播放2");
+        info1.setSongName("无法播放2");
+        info1.setSongUrl("http:www.acbd.com/232131");
 
         List<SongInfo> mSongInfo = new ArrayList<>();
         mSongInfo.add(info);
         mSongInfo.add(info1);
-        mSongInfo.add(info2);
         return mSongInfo;
     }
 

@@ -4,6 +4,7 @@ import android.os.RemoteException;
 
 import com.samplayer.aidl.ISAMPlayerCallBack;
 import com.samplayer.aidl.ISAMPlayerService;
+import com.samplayer.core.remote.player.cmd.CmdHandlerHelper;
 import com.samplayer.model.PlayMode;
 import com.samplayer.model.SongInfo;
 
@@ -134,7 +135,9 @@ public class ClientPlayerCmdProxy extends ISAMPlayerService.Stub {
     @Override
     public void stop() throws RemoteException {
         if (mSAMPlayerService != null) {
-            mSAMPlayerService.stop();
+            //mSAMPlayerService.stop();
+            //exo播放器如果不在主线程回调就会继续调用onComplete导致无法停止播放
+            CmdHandlerHelper.sendCmd(CmdHandlerHelper.CMD_STOP);
         }
     }
 

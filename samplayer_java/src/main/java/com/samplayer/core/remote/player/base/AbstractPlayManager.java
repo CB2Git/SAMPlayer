@@ -275,7 +275,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             mPlayListener.onError(what, extra);
         }
         mSongInfo = null;
-        return true;
+        return false;
     }
 
     @Override

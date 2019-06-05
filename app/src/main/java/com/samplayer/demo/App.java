@@ -8,6 +8,7 @@ import com.samplayer.core.remote.player.PlayerFactory;
 import com.samplayer.demo.config.OutInterceptor;
 import com.samplayer.demo.config.OutNotificationConfig;
 import com.samplayer.demo.config.RemotePlayListener;
+import com.samplayer.exo.ExoPlayManager;
 import com.samplayer.ijk.IJKPlayManager;
 import com.samplayer.outconfig.OutConfigFactory;
 

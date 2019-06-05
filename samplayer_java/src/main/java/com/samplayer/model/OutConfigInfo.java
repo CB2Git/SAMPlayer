@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.samplayer.interceptor.Interceptor;
 import com.samplayer.listener.IPlayerListener;
-import com.samplayer.outconfig.InterceptorConfig;
 import com.samplayer.outconfig.NotificationConfig;
 import com.samplayer.outconfig.OutConfigFactory;
 
