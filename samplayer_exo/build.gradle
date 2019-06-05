@@ -28,7 +28,7 @@ dependencies {
     androidTestImplementation "com.android.support.test:runner:${versions.runner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso_core}"
 
-    implementation project(':samplayer_java')
+    compileOnly project(':samplayer_java')
 
     compileOnly "tv.danmaku.ijk.media:ijkplayer-java:${versions.ijk}"
     implementation "tv.danmaku.ijk.media:ijkplayer-exo:${versions.ijk}"

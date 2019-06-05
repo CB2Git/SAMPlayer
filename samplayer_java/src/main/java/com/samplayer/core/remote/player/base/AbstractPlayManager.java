@@ -6,13 +6,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.samplayer.core.remote.player.cmd.AudioFocusManager;
-import com.samplayer.core.remote.player.interceptor.InterceptorCallback;
-import com.samplayer.core.remote.player.interceptor.InterceptorCallbackWrapper;
+import com.samplayer.interceptor.Interceptor;
+import com.samplayer.interceptor.InterceptorCallback;
+import com.samplayer.interceptor.InterceptorCallbackWrapper;
 import com.samplayer.model.SongInfo;
-import com.samplayer.outconfig.InterceptorConfig;
 import com.samplayer.utils.SAMLog;
+
+import java.util.List;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
@@ -25,7 +28,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
     /**
      * 拦截器  用与在播放之前允许用户去重设播放地址
      */
-    private InterceptorConfig mInterceptorConfig;
+    private List<Interceptor> mInterceptors;
 
     /**
      * 播放器
@@ -109,11 +112,11 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             }
         }
 
-        if (mInterceptorConfig != null) {
+        if (mInterceptors != null && mInterceptors.size() > 0) {
             if (mCallbackWrapper != null) {
                 mCallbackWrapper.invalid();
             }
-            mCallbackWrapper = new InterceptorCallbackWrapper(new InterceptorCallback() {
+            mCallbackWrapper = new InterceptorCallbackWrapper(songInfo, mInterceptors, new InterceptorCallback() {
                 @Override
                 public void onContinue(SongInfo info) {
                     mHandler.removeCallbacksAndMessages(null);
@@ -129,13 +132,16 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
                 }
 
                 @Override
-                public void inProcess() {
+                public void inProcess(SongInfo info) {
                     if (mPlayListener != null) {
-                        mPlayListener.inInterceptorProcess();
+                        mPlayListener.inInterceptorProcess(info);
                     }
+                    //因为拦截器中可以进行耗时操作
+                    //所以当拦截器开始处理以后停止当前播放然后将新的歌曲信息回调回去
+                    getNewPlayer();
                 }
             });
-            mInterceptorConfig.action(songInfo, mCallbackWrapper);
+            mCallbackWrapper.interceptor();
         } else {
             mHandler.removeCallbacksAndMessages(null);
             mHandler.obtainMessage(MSG_REAL_PLAY, songInfo).sendToTarget();
@@ -145,8 +151,14 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
     private void realPlay(SongInfo info) {
         IMediaPlayer newPlayer = getNewPlayer();
         try {
-            //注意 如果使用exo播放器 这里必须在主线程中初始化
-            newPlayer.setDataSource(info.getSongUrl());
+            //如果拦截以后的url不为空 则使用被拦截器修改以后的url
+            if (!TextUtils.isEmpty(info.getSongInterceptorUrl())) {
+                //注意 如果使用exo播放器 这里必须在主线程中初始化
+                newPlayer.setDataSource(info.getSongInterceptorUrl());
+            } else {
+                //注意 如果使用exo播放器 这里必须在主线程中初始化
+                newPlayer.setDataSource(info.getSongUrl());
+            }
             newPlayer.prepareAsync();
             mSongInfo = info;
             if (mPlayListener != null) {
@@ -158,8 +170,8 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
     }
 
     @Override
-    public void setInterceptor(InterceptorConfig interceptor) {
-        mInterceptorConfig = interceptor;
+    public void setInterceptor(List<Interceptor> interceptors) {
+        mInterceptors = interceptors;
     }
 
     @Override
@@ -188,6 +200,9 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
         return mMediaPlayer;
     }
 
+    /**
+     * 获取一个新的播放器 会停止当前正在播放的并清空当前播放信息
+     */
     private IMediaPlayer getNewPlayer() {
         if (mMediaPlayer != null) {
             mMediaPlayer.reset();

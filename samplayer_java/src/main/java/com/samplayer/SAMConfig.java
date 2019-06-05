@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.samplayer.utils.SAMLog;
 
-public class SMAConfig {
+public class SAMConfig {
 
     private static final String TAG = "SMAManager";
 
@@ -24,7 +24,7 @@ public class SMAConfig {
         SAMLog.enable(enableDebug);
     }
 
-    protected static Context getAppContext() {
+    public static Context getAppContext() {
         if (mAppContext == null) {
             SAMLog.w(TAG, "getAppContext：没有初始化");
         }

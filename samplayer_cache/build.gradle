@@ -1,29 +1,27 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion build_versions.compile_sdk_version
+
+
+
     defaultConfig {
-        applicationId "com.samplayer.demo"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        ndk {
-            //设置支持的SO库架构
-            abiFilters 'armeabi', 'armeabi-v7a', 'x86'
-        }
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled = true
-    }
+
 }
 
 dependencies {
@@ -32,11 +30,8 @@ dependencies {
     testImplementation "junit:junit:${versions.junit}"
     androidTestImplementation "com.android.support.test:runner:${versions.runner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso_core}"
-    implementation "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
-    implementation "com.android.support:recyclerview-v7:${versions.v7}"
-    implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
-    implementation project(':samplayer_java')
-    implementation project(':samplayer_exo')
-    implementation project(':samplayer_ijk_player')
-    implementation project(':samplayer_cache')
+
+    compileOnly project(':samplayer_java')
+
+    api "com.danikula:videocache:${versions.videocache}"
 }

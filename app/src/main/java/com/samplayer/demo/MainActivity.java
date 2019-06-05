@@ -90,6 +90,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mBinding.homeSongDuring.setText("00:00/00:00");
         }
 
+
+        @Override
+        public void inInterceptorProcess(SongInfo info) {
+            super.inInterceptorProcess(info);
+            //这么做的原因看回调方法上面注释
+            onPlayableStart(info);
+        }
+
         @Override
         public void onBufferProgress(int percent) {
             super.onBufferProgress(percent);
@@ -232,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void scanLocalMusicInfo() {
 
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "请给与读取权限", Toast.LENGTH_SHORT).show();
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 10);
@@ -303,20 +311,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         info.setSongId("1");
         info.setArtist("周杰伦");
         info.setSongName("稻香");
-        info.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/1042bded3e4540ca66d31a7336f8205b/599474129/139084057600128.mp3?xcode=04e766f2d90c3d88223d24c5de246011");
+        info.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/1042bded3e4540ca66d31a7336f8205b/599474129/13908401559631661128.mp3?xcode=7b661633f80d8b461e0a87f01dbb9fb5");
 
 
         SongInfo info1 = new SongInfo();
         info1.setSongId("2");
         info1.setArtist("周杰伦");
         info1.setSongName("超人不会飞");
-        info1.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/234c66c6c782f0156c085bd2076900fc/599642326/21738664800128.mp3?xcode=0374eb40403dfbd76a37d80a2c02fc5b");
+        info1.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/234c66c6c782f0156c085bd2076900fc/599642326/2173861559638861128.mp3?xcode=7b661633f80d8b4629676627b54cb918");
 
         SongInfo info2 = new SongInfo();
         info2.setSongId("3");
         info2.setArtist("周杰伦");
         info2.setSongName("蒲公英的约定");
-        info2.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/9b252e201b1519c2c2b69b58e1c56559/599641483/219957248400128.mp3?xcode=e3cb462e57b02c839d88bb873c3ec0e5");
+        info2.setSongUrl("http://zhangmenshiting.qianqian.com/data2/music/9b252e201b1519c2c2b69b58e1c56559/599641483/219957248400128.mp3?xcode=b3ca30af58a1ec10a0d51cfc739c1004");
 
 
         List<SongInfo> mSongInfo = new ArrayList<>();

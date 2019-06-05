@@ -416,8 +416,8 @@ public class PlayManager implements IPlayer, IReleaseAble {
             }
 
             @Override
-            public void inInterceptorProcess() throws RemoteException {
-                mHandler.sendEmptyMessage(MSG_INTERCEPTOR_PROCESS);
+            public void inInterceptorProcess(SongInfo info) throws RemoteException {
+                mHandler.obtainMessage(MSG_INTERCEPTOR_PROCESS, info).sendToTarget();
             }
 
             @Override
@@ -470,15 +470,15 @@ public class PlayManager implements IPlayer, IReleaseAble {
                     handlerErrorEvent(msg.arg1, msg.arg2);
                     break;
                 case MSG_INTERCEPTOR_PROCESS:
-                    handlerInterceptorProcess();
+                    handlerInterceptorProcess((SongInfo) msg.obj);
                     break;
             }
         }
     };
 
-    private void handlerInterceptorProcess() {
+    private void handlerInterceptorProcess(SongInfo obj) {
         for (IPlayerListener item : mPlayerListeners) {
-            item.inInterceptorProcess();
+            item.inInterceptorProcess(obj);
         }
     }
 

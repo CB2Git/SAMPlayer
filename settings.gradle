@@ -1,1 +1,1 @@
-include ':app', ':samplayer_java', ':samplayer_exo', ':samplayer_ijk_player'
+include ':app', ':samplayer_java', ':samplayer_exo', ':samplayer_ijk_player', ':samplayer_cache'

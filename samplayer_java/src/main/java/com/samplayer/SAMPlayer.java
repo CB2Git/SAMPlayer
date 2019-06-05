@@ -29,7 +29,7 @@ public class SAMPlayer implements ISAMPlayer {
     private IPlayer mISamPlayer;
 
     private SAMPlayer() {
-        init(SMAConfig.getAppContext());
+        init(SAMConfig.getAppContext());
     }
 
     public static ISAMPlayer getInstance() {

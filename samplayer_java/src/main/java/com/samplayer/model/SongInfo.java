@@ -23,6 +23,7 @@ public class SongInfo implements Parcelable {
     private String songNameKey = "";
     private Bitmap songCoverBitmap;
     private String songUrl = ""; //音乐播放地址
+    private String songInterceptorUrl = ""; //进过拦截器修改以后的播放地址
     private String genre = ""; //类型（流派）
     private String type = ""; //类型
     private String size = "0"; //音乐大小
@@ -393,6 +394,14 @@ public class SongInfo implements Parcelable {
         this.albumPlayCount = albumPlayCount;
     }
 
+    public String getSongInterceptorUrl() {
+        return songInterceptorUrl;
+    }
+
+    public void setSongInterceptorUrl(String songInterceptorUrl) {
+        this.songInterceptorUrl = songInterceptorUrl;
+    }
+
     public SongInfo() {
     }
 
@@ -404,6 +413,7 @@ public class SongInfo implements Parcelable {
         return Objects.equals(songId, songInfo.getSongId()) &&
                 Objects.equals(songUrl, songInfo.getSongUrl());
     }
+
 
     @Override
     public int describeContents() {
@@ -422,6 +432,7 @@ public class SongInfo implements Parcelable {
         dest.writeString(this.songNameKey);
         dest.writeParcelable(this.songCoverBitmap, flags);
         dest.writeString(this.songUrl);
+        dest.writeString(this.songInterceptorUrl);
         dest.writeString(this.genre);
         dest.writeString(this.type);
         dest.writeString(this.size);
@@ -467,6 +478,7 @@ public class SongInfo implements Parcelable {
         this.songNameKey = in.readString();
         this.songCoverBitmap = in.readParcelable(Bitmap.class.getClassLoader());
         this.songUrl = in.readString();
+        this.songInterceptorUrl = in.readString();
         this.genre = in.readString();
         this.type = in.readString();
         this.size = in.readString();

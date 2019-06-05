@@ -20,6 +20,8 @@ versions.ijk = "0.8.8"
 
 versions.constraint_layout = "1.1.3"
 
+versions.videocache = "2.7.1"
+
 versions.BaseRecyclerViewAdapterHelper = "2.9.46"
 
 ext.versions = versions

@@ -2,14 +2,18 @@ package com.samplayer.outconfig;
 
 import android.support.annotation.Nullable;
 
+import com.samplayer.interceptor.Interceptor;
 import com.samplayer.listener.IPlayerListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 用于初始化配置
  */
 public class OutConfigFactory {
 
-    private static Class<? extends InterceptorConfig> sInterceptorConfig;
+    private static List<Class<? extends Interceptor>> sInterceptor = new ArrayList<>();
 
     private static Class<? extends NotificationConfig> sNotificationConfig;
 
@@ -18,8 +22,8 @@ public class OutConfigFactory {
     /**
      * 设置拦截器
      */
-    public static void setInterceptorConfig(Class<? extends InterceptorConfig> config) {
-        sInterceptorConfig = config;
+    public static void addInterceptor(Class<? extends Interceptor> interceptor) {
+        sInterceptor.add(interceptor);
     }
 
     /**
@@ -29,42 +33,44 @@ public class OutConfigFactory {
         sNotificationConfig = config;
     }
 
-    public static void setPlayerListener(Class<? extends IPlayerListener> playerListener) {
+    /**
+     * 此监听将回调在播放进程，当你需要记录播放历史、上报流水时，推荐使用这个 因为ui进程可能被杀死
+     */
+    public static void setRemotePlayerListener(Class<? extends IPlayerListener> playerListener) {
         OutConfigFactory.sPlayerListener = playerListener;
     }
 
-    @Nullable
-    public static InterceptorConfig createInterceptorConfig() {
-        if (sInterceptorConfig != null) {
-            try {
-                return sInterceptorConfig.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
+    public static List<Interceptor> createInterceptors() {
+        if (sInterceptor == null) {
+            return null;
+        }
+
+        List<Interceptor> interceptors = new ArrayList<>();
+
+        for (Class<? extends Interceptor> item : sInterceptor) {
+            Interceptor interceptor = create(item);
+            if (interceptor != null) {
+                interceptors.add(interceptor);
             }
         }
-        return null;
+        return interceptors;
     }
 
     @Nullable
     public static NotificationConfig createNotificationConfig() {
-        if (sNotificationConfig != null) {
-            try {
-                return sNotificationConfig.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
+        return create(sNotificationConfig);
     }
 
     @Nullable
     public static IPlayerListener createPlayerListener() {
-        if (sPlayerListener != null) {
-            try {
-                return sPlayerListener.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        return create(sPlayerListener);
+    }
+
+    private static <T> T create(Class<? extends T> cls) {
+        try {
+            return cls.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }

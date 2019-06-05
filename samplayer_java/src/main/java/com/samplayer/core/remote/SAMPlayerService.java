@@ -115,9 +115,9 @@ public class SAMPlayerService extends Service {
         //获取配置信息
         mOutConfigInfo.inject(this);
 
-        if (mOutConfigInfo.getInterceptorConfig() != null) {
+        if (mOutConfigInfo.getInterceptors() != null) {
             //拦截器
-            mPlayerManager.setInterceptor(mOutConfigInfo.getInterceptorConfig());
+            mPlayerManager.setInterceptor(mOutConfigInfo.getInterceptors());
         }
 
     }
@@ -232,8 +232,8 @@ public class SAMPlayerService extends Service {
             }
 
             @Override
-            public void inInterceptorProcess() {
-                notifyInterceptorProcess();
+            public void inInterceptorProcess(SongInfo info) {
+                notifyInterceptorProcess(info);
             }
 
 
@@ -409,10 +409,12 @@ public class SAMPlayerService extends Service {
 
 
     public void stop() {
-        mPlayerManager.stop();
+        if (mPlayerManager.getCurrentPlayer().isPlaying() || mPlayerManager.getCurrentPlayInfo() != null) {
+            mPlayerManager.stop();
+            notifyStop();
+        }
         mHandler.removeCallbacksAndMessages(null);
         stopForeground(true);
-        notifyStop();
     }
 
 
@@ -677,21 +679,21 @@ public class SAMPlayerService extends Service {
         }
     }
 
-    private void notifyInterceptorProcess() {
+    private void notifyInterceptorProcess(SongInfo info) {
         if (mPlayerCallBack != null) {
             try {
-                mPlayerCallBack.inInterceptorProcess();
+                mPlayerCallBack.inInterceptorProcess(info);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        notifyOutInterceptorProcess();
+        notifyOutInterceptorProcess(info);
     }
 
-    private void notifyOutInterceptorProcess() {
+    private void notifyOutInterceptorProcess(SongInfo info) {
         IPlayerListener listener = mOutConfigInfo.getPlayerListener();
         if (listener != null) {
-            listener.inInterceptorProcess();
+            listener.inInterceptorProcess(info);
         }
     }
 

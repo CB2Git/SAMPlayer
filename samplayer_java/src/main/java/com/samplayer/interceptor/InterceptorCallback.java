@@ -1,4 +1,4 @@
-package com.samplayer.core.remote.player.interceptor;
+package com.samplayer.interceptor;
 
 import com.samplayer.listener.IPlayerListener;
 import com.samplayer.model.SongInfo;
@@ -23,7 +23,7 @@ public interface InterceptorCallback {
     void onError(int errorCode);
 
     /**
-     * 开始处理了  会回调{@link IPlayerListener#inInterceptorProcess()}
+     * 开始处理了  会回调{@link IPlayerListener#inInterceptorProcess(SongInfo)}
      */
-    void inProcess();
+    void inProcess(SongInfo info);
 }

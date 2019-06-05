@@ -48,7 +48,7 @@ public class SimplePlayListener implements IPlayerListener {
     }
 
     @Override
-    public void inInterceptorProcess() {
+    public void inInterceptorProcess(SongInfo info) {
         SAMLog.i(TAG, "inInterceptorProcess ");
     }
 

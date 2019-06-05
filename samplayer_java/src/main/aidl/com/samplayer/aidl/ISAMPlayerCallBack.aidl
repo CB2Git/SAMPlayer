@@ -55,7 +55,7 @@ interface ISAMPlayerCallBack {
     /**
     * 正在被拦截器处理
     * */
-    void inInterceptorProcess();
+    void inInterceptorProcess(inout SongInfo songinfo);
 
     /**
      * 发生了错误

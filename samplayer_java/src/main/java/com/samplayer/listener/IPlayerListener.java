@@ -57,9 +57,16 @@ public interface IPlayerListener {
     void onStop();
 
     /**
-     * 拦截器接管了 正在处理  可以进行耗时操作
+     * 拦截器接管了 正在处理
+     * <p>
+     * 由于拦截器中可以进行耗时操作，所以如果你使用了拦截器 请使用这个回调去更新歌曲信息并给与用户加载中的提示
+     * <p>
+     * 如果拦截器中出现错误，会回调{@link IPlayerListener#onError(int, int)}
+     * 如果拦截器处理完毕 会回调{@link IPlayerListener#onPlayableStart(SongInfo)}
+     *
+     * @param info 正在被拦截器处理的歌曲信息
      */
-    void inInterceptorProcess();
+    void inInterceptorProcess(SongInfo info);
 
     /**
      * 发生了错误

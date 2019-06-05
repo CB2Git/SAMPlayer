@@ -2,8 +2,10 @@ package com.samplayer.core.remote.player.base;
 
 import android.support.annotation.Nullable;
 
+import com.samplayer.interceptor.Interceptor;
 import com.samplayer.model.SongInfo;
-import com.samplayer.outconfig.InterceptorConfig;
+
+import java.util.List;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
@@ -25,10 +27,8 @@ public interface IPlayManager {
 
     /**
      * 设置拦截器
-     *
-     * @param interceptor
      */
-    void setInterceptor(InterceptorConfig interceptor);
+    void setInterceptor(List<Interceptor> interceptors);
 
     /**
      * 播放指定的音乐
@@ -86,8 +86,10 @@ public interface IPlayManager {
 
         /**
          * 正在被拦截器处理
+         *
+         * @param info 正在被处理的歌曲信息
          */
-        void inInterceptorProcess();
+        void inInterceptorProcess(SongInfo info);
 
         /**
          * 缓冲结束

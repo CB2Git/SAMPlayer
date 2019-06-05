@@ -48,8 +48,8 @@ public class RemotePlayListener extends SimplePlayListener {
     }
 
     @Override
-    public void inInterceptorProcess() {
-        super.inInterceptorProcess();
+    public void inInterceptorProcess(SongInfo info) {
+        super.inInterceptorProcess(info);
     }
 
     @Override

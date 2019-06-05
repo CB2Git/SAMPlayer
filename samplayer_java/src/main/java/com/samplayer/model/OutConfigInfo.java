@@ -3,10 +3,13 @@ package com.samplayer.model;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
+import com.samplayer.interceptor.Interceptor;
 import com.samplayer.listener.IPlayerListener;
 import com.samplayer.outconfig.InterceptorConfig;
 import com.samplayer.outconfig.NotificationConfig;
 import com.samplayer.outconfig.OutConfigFactory;
+
+import java.util.List;
 
 public class OutConfigInfo {
 
@@ -14,7 +17,7 @@ public class OutConfigInfo {
      * 拦截器
      */
     @Nullable
-    private InterceptorConfig mInterceptorConfig;
+    private List<Interceptor> mInterceptors;
 
     /**
      * 通知栏
@@ -33,7 +36,7 @@ public class OutConfigInfo {
     }
 
     public void inject(Context context) {
-        mInterceptorConfig = OutConfigFactory.createInterceptorConfig();
+        mInterceptors = OutConfigFactory.createInterceptors();
         mNotificationConfig = OutConfigFactory.createNotificationConfig();
         mPlayerListener = OutConfigFactory.createPlayerListener();
         if (mNotificationConfig != null) {
@@ -42,8 +45,8 @@ public class OutConfigInfo {
     }
 
     @Nullable
-    public InterceptorConfig getInterceptorConfig() {
-        return mInterceptorConfig;
+    public List<Interceptor> getInterceptors() {
+        return mInterceptors;
     }
 
     @Nullable
