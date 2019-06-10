@@ -25,16 +25,34 @@ public abstract class NotificationConfig extends BroadcastReceiver {
 
     public static final int NOTIFICATION_ID = 100567;
 
+    /**
+     * 播放
+     */
     public static final String ACTION_SAM_PLAY = "ACTION_SAM_PLAY";
 
+    /**
+     * 暂停
+     */
     public static final String ACTION_SAM_PAUSE = "ACTION_SAM_PAUSE";
 
+    /**
+     * 切换播放状态
+     */
     public static final String ACTION_SAM_TOGGLE = "ACTION_SAM_TOGGLE";
 
+    /**
+     * 下一曲
+     */
     public static final String ACTION_SAM_NEXT = "ACTION_SAM_NEXT";
 
+    /**
+     * 上一曲
+     */
     public static final String ACTION_SAM_PREVIOUS = "ACTION_SAM_PREVIOUS";
 
+    /**
+     * 停止播放
+     */
     public static final String ACTION_SAM_STOP = "ACTION_SAM_STOP";
 
     private Context mContext;

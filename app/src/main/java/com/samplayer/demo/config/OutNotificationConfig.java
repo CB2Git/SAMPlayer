@@ -22,7 +22,7 @@ public class OutNotificationConfig extends com.samplayer.outconfig.NotificationC
     private static final String channelName = "SAMPlayer";
     private static final String channelDescription = "SAMPlayer";
 
-    private static final String ACTION_MY_XIA_XIE_DE = "xiaxiede";
+    private static final String CUSTOM_ACTION = "custom_action";
 
     private Context mContext;
 
@@ -39,13 +39,13 @@ public class OutNotificationConfig extends com.samplayer.outconfig.NotificationC
     public void init(Context context) {
         super.init(context);
         //添加自定义的点击事件
-        addAction(ACTION_MY_XIA_XIE_DE);
+        addAction(CUSTOM_ACTION);
     }
 
     @Override
     protected void handleAction(String action) {
         super.handleAction(action);
-        if (ACTION_MY_XIA_XIE_DE.equals(action)) {
+        if (CUSTOM_ACTION.equals(action)) {
             Toast.makeText(mContext, "自定义的动作被点击了", Toast.LENGTH_SHORT).show();
             mBuilder.setCustomBigContentView(buildBigView(mContext, mSongInfo, true, true));
             updateNotification(mContext, mBuilder.build());
@@ -128,7 +128,7 @@ public class OutNotificationConfig extends com.samplayer.outconfig.NotificationC
         remoteView.setOnClickPendingIntent(R.id.ntf_next_big, getPendingBroadcastWithAction(context, ACTION_SAM_NEXT));
         remoteView.setOnClickPendingIntent(R.id.ntf_pre_big, getPendingBroadcastWithAction(context, ACTION_SAM_PREVIOUS));
         remoteView.setOnClickPendingIntent(R.id.ntf_close_big, getPendingBroadcastWithAction(context, ACTION_SAM_STOP));
-        remoteView.setOnClickPendingIntent(R.id.ntf_like, getPendingBroadcastWithAction(context, ACTION_MY_XIA_XIE_DE));
+        remoteView.setOnClickPendingIntent(R.id.ntf_like, getPendingBroadcastWithAction(context, CUSTOM_ACTION));
         return remoteView;
     }
 }

@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.home_release:
                 SAMPlayer.getInstance().release();
+                Toast.makeText(this, "释放播放器以后监听会被取消！！！", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.ctrl_play:
                 SAMPlayer.getInstance().getPlayer().play();
