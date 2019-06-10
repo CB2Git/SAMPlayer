@@ -275,6 +275,8 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             mPlayListener.onError(what, extra);
         }
         mSongInfo = null;
+        //这里返回flase的原因是MediaPlayer以及ijk返回true均不会继续回调onComplete
+        //但是exo在ijk中的实现会继续回调onComplete，所以这里将行为统一 返回false
         return false;
     }
 

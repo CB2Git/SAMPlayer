@@ -213,8 +213,18 @@ public class SAMPlayerService extends Service {
      */
     private IPlayManager.PlayListener getOnPlayListener() {
         return new IPlayManager.PlayListener() {
+
+            /**
+             * 当前是否播放出错
+             *
+             * 因为exo播放器当onError回调以后会继续回调onComplete(ijk的实现有问题?)
+             * 所以标记一下是否出错了，然后当回调onComplete的时候去决定是否继续播放下一曲
+             */
+            private boolean isInErrorState = false;
+
             @Override
             public void onPlayableStart(SongInfo songInfo) {
+                isInErrorState = false;
                 notifyPlayableStart(songInfo);
                 notifyNotificationPlayableChange(songInfo);
             }
@@ -257,11 +267,15 @@ public class SAMPlayerService extends Service {
             public void onComplete() {
                 notifyComplete();
                 mHandler.removeMessages(MSG_TIME_UPDATE);
-                next();
+                //next();
+                if (!isInErrorState) {
+                    next();
+                }
             }
 
             @Override
             public void onError(int what, int extra) {
+                isInErrorState = true;
                 notifyError(what, extra);
                 mHandler.removeMessages(MSG_TIME_UPDATE);
             }
