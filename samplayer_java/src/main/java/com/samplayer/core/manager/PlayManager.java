@@ -15,6 +15,7 @@ import com.samplayer.listener.IPlayerListener;
 import com.samplayer.listener.ServiceSessionListener;
 import com.samplayer.model.PlayMode;
 import com.samplayer.model.SongInfo;
+import com.samplayer.outconfig.TimerConfig;
 import com.samplayer.utils.SAMLog;
 
 import java.util.Collections;
@@ -361,6 +362,41 @@ public class PlayManager implements IPlayer, IReleaseAble {
             return;
         }
         mPlayerListeners.remove(listener);
+    }
+
+    @Override
+    public void timer(TimerConfig timerConfig) {
+        if (checkRemoteService()) {
+            try {
+                mServiceSession.getRemoteService().timer(timerConfig);
+            } catch (Exception e) {
+                SAMLog.printCause(e);
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public TimerConfig getTimerConfig() {
+        if (checkRemoteService()) {
+            try {
+                return mServiceSession.getRemoteService().getTimerConfig();
+            } catch (Exception e) {
+                SAMLog.printCause(e);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void cancelTimer() {
+        if (checkRemoteService()) {
+            try {
+                mServiceSession.getRemoteService().cancelTimer();
+            } catch (Exception e) {
+                SAMLog.printCause(e);
+            }
+        }
     }
 
     /**

@@ -7,6 +7,7 @@ import com.samplayer.aidl.ISAMPlayerService;
 import com.samplayer.core.remote.player.cmd.CmdHandlerHelper;
 import com.samplayer.model.PlayMode;
 import com.samplayer.model.SongInfo;
+import com.samplayer.outconfig.TimerConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -176,6 +177,28 @@ public class ClientPlayerCmdProxy extends ISAMPlayerService.Stub {
     public void setPlayCallback(ISAMPlayerCallBack callback) throws RemoteException {
         if (mSAMPlayerService != null) {
             mSAMPlayerService.setPlayCallback(callback);
+        }
+    }
+
+    @Override
+    public void timer(TimerConfig timerConfig) throws RemoteException {
+        if (mSAMPlayerService != null) {
+            mSAMPlayerService.timer(timerConfig);
+        }
+    }
+
+    @Override
+    public TimerConfig getTimerConfig() throws RemoteException {
+        if (mSAMPlayerService != null) {
+            return mSAMPlayerService.getTimerConfig();
+        }
+        return null;
+    }
+
+    @Override
+    public void cancelTimer() throws RemoteException {
+        if (mSAMPlayerService != null) {
+            mSAMPlayerService.cancelTimer();
         }
     }
 }

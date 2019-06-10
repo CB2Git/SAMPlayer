@@ -1,6 +1,10 @@
 package com.samplayer.demo;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
@@ -21,6 +25,7 @@ import com.samplayer.listener.ServiceSessionListener;
 import com.samplayer.listener.SimplePlayListener;
 import com.samplayer.model.PlayMode;
 import com.samplayer.model.SongInfo;
+import com.samplayer.outconfig.TimerConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +62,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mSeekBarInTouchState = false;
             }
         });
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(TimerConfig.ACTION_TIMER_START);
+        filter.addAction(TimerConfig.ACTION_TIMER_UPDATE);
+        filter.addAction(TimerConfig.ACTION_TIMER_COMPLETE);
+        filter.addAction(TimerConfig.ACTION_TIMER_STOP);
+        registerReceiver(mTimerReceiver, filter);
     }
 
     private void init() {
@@ -147,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         SAMPlayer.getInstance().getServiceSession().removeSessionListener(mServiceSessionListener);
         SAMPlayer.getInstance().getPlayer().removeListener(mSimplePlayListener);
+        unregisterReceiver(mTimerReceiver);
     }
 
     @Override
@@ -235,7 +248,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.ctrl_position:
                 showInfo("进度:" + SAMPlayer.getInstance().getPlayer().getCurrentPosition());
                 break;
+            case R.id.ctrl_timing:
+                TimerConfig timerConfig = new TimerConfig(100);
+                if (!mBinding.ctrlRelaxStop.isChecked()) {
+                    timerConfig.setMode(TimerConfig.MODE_ABS);
+                }
+                SAMPlayer.getInstance().getPlayer().timer(timerConfig);
+                showInfo("设置定时:" + timerConfig);
+                break;
+            case R.id.ctrl_cancel_timing:
+                SAMPlayer.getInstance().getPlayer().cancelTimer();
+                showInfo("取消定时");
+                break;
+            case R.id.ctrl_timing_info:
+                TimerConfig config = SAMPlayer.getInstance().getPlayer().getTimerConfig();
+                if (config == null) {
+                    showInfo("没有定时信息");
+                } else {
+                    showInfo(config.toString());
+                }
+                break;
+        }
+    }
 
+    private TimerReceiver mTimerReceiver = new TimerReceiver();
+
+    private class TimerReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (TimerConfig.ACTION_TIMER_START.equals(action)) {
+                showInfo("计时开始");
+                mBinding.ctrlTiming.setEnabled(false);
+            } else if (TimerConfig.ACTION_TIMER_COMPLETE.equals(action)) {
+                showInfo("计时完毕");
+                mBinding.ctrlTiming.setEnabled(true);
+            } else if (TimerConfig.ACTION_TIMER_STOP.equals(action)) {
+                showInfo("计时停止");
+                mBinding.ctrlTiming.setEnabled(true);
+            } else if (TimerConfig.ACTION_TIMER_UPDATE.equals(action)) {
+                long second = intent.getLongExtra(TimerConfig.KEY_TIMER, 0);
+                mBinding.infoTime.setText(TimeUtils.formatSecond(second));
+            }
         }
     }
 

@@ -22,11 +22,13 @@ import com.samplayer.core.manager.circulation.SingleCirculationMode;
 import com.samplayer.core.remote.player.PlayerFactory;
 import com.samplayer.core.remote.player.base.IPlayManager;
 import com.samplayer.core.remote.player.cmd.CmdHandlerHelper;
+import com.samplayer.core.remote.player.cmd.TimerHandler;
 import com.samplayer.listener.IPlayerListener;
 import com.samplayer.model.OutConfigInfo;
 import com.samplayer.model.PlayMode;
 import com.samplayer.model.SongInfo;
 import com.samplayer.outconfig.NotificationConfig;
+import com.samplayer.outconfig.TimerConfig;
 import com.samplayer.utils.SAMLog;
 
 import java.util.List;
@@ -74,7 +76,7 @@ public class SAMPlayerService extends Service {
     private NoisyAudioStreamReceiver mAudioStreamReceiver = new NoisyAudioStreamReceiver();
 
     /**
-     * 客户端发过来的请求主要在{@link ClientPlayerCmdProxy}中处理
+     * 客户端发过来的请求主要在{@link ClientPlayerCmdProxy}中回调回来
      */
     private ClientPlayerCmdProxy mClientPlayerCmdProxy;
 
@@ -82,7 +84,16 @@ public class SAMPlayerService extends Service {
      * 外部通过反射注入的一些配置
      */
     private OutConfigInfo mOutConfigInfo = new OutConfigInfo();
-    ;
+
+    /**
+     * 定时停止播放的配置
+     */
+    private TimerHandler mTimerHandler;
+
+    /**
+     * 是否自动播放下一曲
+     */
+    private boolean isAutoPlayNext = true;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -137,7 +148,7 @@ public class SAMPlayerService extends Service {
         //断开耳机拔出广播
         unregisterReceiver(mAudioStreamReceiver);
         //停止刷新时间
-        mHandler.removeCallbacksAndMessages(null);
+        mUpdateProgressHandler.removeCallbacksAndMessages(null);
         //停止播放
         stop();
         //释放播放器
@@ -155,7 +166,7 @@ public class SAMPlayerService extends Service {
     /**
      * 刷新播放时长的
      */
-    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+    private Handler mUpdateProgressHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -164,10 +175,11 @@ public class SAMPlayerService extends Service {
             long duration = currentPlayer.getDuration();
             long currentPosition = currentPlayer.getCurrentPosition();
             notifyProgressChange(currentPlayInfo, currentPosition, duration);
-            mHandler.removeMessages(MSG_TIME_UPDATE);
-            mHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
+            mUpdateProgressHandler.removeMessages(MSG_TIME_UPDATE);
+            mUpdateProgressHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
         }
     };
+
 
     /**
      * 来自线控的监听或者其他地方发过来的命令
@@ -233,7 +245,7 @@ public class SAMPlayerService extends Service {
             public void onStart() {
                 notifyStart();
                 notifyNotificationPlay();
-                mHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
+                mUpdateProgressHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
             }
 
             @Override
@@ -266,10 +278,13 @@ public class SAMPlayerService extends Service {
             @Override
             public void onComplete() {
                 notifyComplete();
-                mHandler.removeMessages(MSG_TIME_UPDATE);
-                //next();
+                mUpdateProgressHandler.removeMessages(MSG_TIME_UPDATE);
+                //没有发生错误
                 if (!isInErrorState) {
-                    next();
+                    //自动播放下一曲
+                    if (isAutoPlayNext) {
+                        next();
+                    }
                 }
             }
 
@@ -277,7 +292,7 @@ public class SAMPlayerService extends Service {
             public void onError(int what, int extra) {
                 isInErrorState = true;
                 notifyError(what, extra);
-                mHandler.removeMessages(MSG_TIME_UPDATE);
+                mUpdateProgressHandler.removeMessages(MSG_TIME_UPDATE);
             }
         };
     }
@@ -300,7 +315,7 @@ public class SAMPlayerService extends Service {
         if (currentPlayer.isPlaying()) {
             currentPlayer.pause();
             //TODO 这里在暂停的时候是否继续回调需要考虑
-            mHandler.removeMessages(MSG_TIME_UPDATE);
+            mUpdateProgressHandler.removeMessages(MSG_TIME_UPDATE);
             notifyPause();
             notifyNotificationPause();
         }
@@ -314,7 +329,7 @@ public class SAMPlayerService extends Service {
         //当没有播放任何音乐的时候不能开始
         if (mPlayerManager.getCurrentPlayInfo() != null && !currentPlayer.isPlaying()) {
             currentPlayer.start();
-            mHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
+            mUpdateProgressHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
             notifyStart();
             notifyNotificationPlay();
         }
@@ -427,7 +442,12 @@ public class SAMPlayerService extends Service {
             mPlayerManager.stop();
             notifyStop();
         }
-        mHandler.removeCallbacksAndMessages(null);
+
+        if (mTimerHandler != null) {
+            mTimerHandler.endTimer();
+        }
+
+        mUpdateProgressHandler.removeCallbacksAndMessages(null);
         stopForeground(true);
     }
 
@@ -493,6 +513,68 @@ public class SAMPlayerService extends Service {
         mPlayerCallBack = callback;
         mPlayerCallBack.asBinder().linkToDeath(getDeathRecipient(), 0);
         SAMLog.i(TAG, "setPlayCallback: listener+1");
+    }
+
+    public void timer(TimerConfig timerConfig) {
+        if (mTimerHandler != null) {
+            mTimerHandler.endTimer();
+        }
+        mTimerHandler = new TimerHandler(timerConfig);
+        mTimerHandler.setOnTimerListener(getOnTimerListener());
+        mTimerHandler.startTimer();
+    }
+
+    public TimerConfig getTimerConfig() {
+        if (mTimerHandler != null) {
+            return mTimerHandler.getTimerConfig();
+        }
+        return null;
+    }
+
+    public void cancelTimer() {
+        if (mTimerHandler != null) {
+            mTimerHandler.endTimer();
+        }
+    }
+
+    private TimerHandler.OnTimerListener getOnTimerListener() {
+        return new TimerHandler.OnTimerListener() {
+            @Override
+            public void onTimerStart(TimerConfig config) {
+                SAMLog.i(TAG, "onTimerStart = " + config.getSecond() + ",mode = " + config.getMode());
+                Intent intent = new Intent(TimerConfig.ACTION_TIMER_START);
+                sendBroadcast(intent);
+            }
+
+            @Override
+            public void onTimerUpdate(TimerConfig config, long residueSecond) {
+                SAMLog.i(TAG, "onTimerUpdate: " + residueSecond);
+                isAutoPlayNext = true;
+                Intent intent = new Intent(TimerConfig.ACTION_TIMER_UPDATE);
+                intent.putExtra(TimerConfig.KEY_TIMER, residueSecond);
+                sendBroadcast(intent);
+            }
+
+            @Override
+            public void onTimerComplete(TimerConfig config) {
+                SAMLog.i(TAG, "onTimerComplete");
+                if (config.getMode() == TimerConfig.MODE_ABS) {
+                    stop();
+                } else {
+                    isAutoPlayNext = false;
+                }
+                Intent intent = new Intent(TimerConfig.ACTION_TIMER_COMPLETE);
+                sendBroadcast(intent);
+            }
+
+            @Override
+            public void onTimerStop(TimerConfig config) {
+                SAMLog.i(TAG, "onTimerStop");
+                isAutoPlayNext = true;
+                Intent intent = new Intent(TimerConfig.ACTION_TIMER_STOP);
+                sendBroadcast(intent);
+            }
+        };
     }
 
     private IBinder.DeathRecipient getDeathRecipient() {
@@ -571,7 +653,7 @@ public class SAMPlayerService extends Service {
         if (mPlayerCallBack != null) {
             try {
                 mPlayerCallBack.onPlayableStart(songInfo);
-                mHandler.removeCallbacksAndMessages(null);
+                mUpdateProgressHandler.removeCallbacksAndMessages(null);
             } catch (Exception e) {
                 e.printStackTrace();
             }

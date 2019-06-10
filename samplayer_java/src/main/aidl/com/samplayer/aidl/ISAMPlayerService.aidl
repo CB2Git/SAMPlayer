@@ -3,6 +3,7 @@ package com.samplayer.aidl;
 
 import com.samplayer.aidl.ISAMPlayerCallBack;
 import com.samplayer.model.SongInfo;
+import com.samplayer.outconfig.TimerConfig;
 
 interface ISAMPlayerService {
 
@@ -129,4 +130,23 @@ interface ISAMPlayerService {
     * 设置播放回调
     */
     void setPlayCallback(in ISAMPlayerCallBack callback);
+
+    /**
+     * 定时停止播放
+     *
+     * @param timerConfig 定时停止播放的配置
+     */
+    void timer(in TimerConfig timerConfig);
+
+    /**
+     * 获取当前的定时播放配置
+     *
+     * @return 如果没有设置过 那么为null
+     */
+    TimerConfig getTimerConfig();
+
+    /**
+     * 取消定时播放
+     */
+    void cancelTimer();
 }

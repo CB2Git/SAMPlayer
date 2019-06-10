@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.samplayer.listener.IPlayerListener;
 import com.samplayer.model.SongInfo;
+import com.samplayer.outconfig.TimerConfig;
 
 import java.util.List;
 
@@ -155,4 +156,24 @@ public interface IPlayer {
      * @param listener
      */
     void removeListener(IPlayerListener listener);
+
+    /**
+     * 定时停止播放
+     *
+     * @param timerConfig 定时停止播放的配置
+     */
+    void timer(TimerConfig timerConfig);
+
+    /**
+     * 获取当前的定时播放配置
+     *
+     * @return 如果没有设置过 那么为null
+     */
+    @Nullable
+    TimerConfig getTimerConfig();
+
+    /**
+     * 取消定时播放
+     */
+    void cancelTimer();
 }

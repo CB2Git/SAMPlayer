@@ -22,9 +22,9 @@ public class App extends Application {
 
         //不设置默认使用MediaPlayer
         //使用ijk
-        PlayerFactory.setPlayManager(IJKPlayManager.class);
+        //PlayerFactory.setPlayManager(IJKPlayManager.class);
         //使用exo
-        //PlayerFactory.setPlayManager(ExoPlayManager.class);
+        PlayerFactory.setPlayManager(ExoPlayManager.class);
 
         //设置拦截器  在播放之前允许用户去改变一下播放地址  需要注意的是此类运行在播放进程
         //OutConfigFactory.addInterceptor(OutInterceptor.class);
