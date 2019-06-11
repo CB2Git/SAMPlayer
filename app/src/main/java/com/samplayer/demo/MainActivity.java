@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showInfo("进度:" + SAMPlayer.getInstance().getPlayer().getCurrentPosition());
                 break;
             case R.id.ctrl_timing:
-                TimerConfig timerConfig = new TimerConfig(100);
+                TimerConfig timerConfig = new TimerConfig(20);
                 if (!mBinding.ctrlRelaxStop.isChecked()) {
                     timerConfig.setMode(TimerConfig.MODE_ABS);
                 }

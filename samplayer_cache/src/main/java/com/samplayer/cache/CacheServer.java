@@ -8,8 +8,8 @@ public class CacheServer {
 
     private static HttpProxyCacheServer httpProxyCacheServer;
 
-    // 1 Gb for cache
-    private static final long CACHE_SIZE = 1024 * 1024 * 1024;
+    // 512M for cache
+    private static final long CACHE_SIZE = 512 * 1024 * 1024;
 
     public static synchronized HttpProxyCacheServer getInstance(Context context) {
         if (httpProxyCacheServer == null) {

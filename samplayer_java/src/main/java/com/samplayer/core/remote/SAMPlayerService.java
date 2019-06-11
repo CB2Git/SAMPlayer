@@ -91,9 +91,9 @@ public class SAMPlayerService extends Service {
     private TimerHandler mTimerHandler;
 
     /**
-     * 是否自动播放下一曲
+     * 当定时播放时间到了以后需要停止
      */
-    private boolean isAutoPlayNext = true;
+    private boolean isShouldStopPlay = false;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -279,12 +279,17 @@ public class SAMPlayerService extends Service {
             public void onComplete() {
                 notifyComplete();
                 mUpdateProgressHandler.removeMessages(MSG_TIME_UPDATE);
+
+                //定时播放时间到了
+                if (isShouldStopPlay) {
+                    SAMLog.i(TAG, "onComplete: 定时播放时间完成,关闭");
+                    stop();
+                    return;
+                }
+
                 //没有发生错误
                 if (!isInErrorState) {
-                    //自动播放下一曲
-                    if (isAutoPlayNext) {
-                        next();
-                    }
+                    next();
                 }
             }
 
@@ -445,6 +450,7 @@ public class SAMPlayerService extends Service {
 
         if (mTimerHandler != null) {
             mTimerHandler.endTimer();
+            mTimerHandler = null;
         }
 
         mUpdateProgressHandler.removeCallbacksAndMessages(null);
@@ -534,6 +540,7 @@ public class SAMPlayerService extends Service {
     public void cancelTimer() {
         if (mTimerHandler != null) {
             mTimerHandler.endTimer();
+            mTimerHandler = null;
         }
     }
 
@@ -549,7 +556,7 @@ public class SAMPlayerService extends Service {
             @Override
             public void onTimerUpdate(TimerConfig config, long residueSecond) {
                 SAMLog.i(TAG, "onTimerUpdate: " + residueSecond);
-                isAutoPlayNext = true;
+                isShouldStopPlay = false;
                 Intent intent = new Intent(TimerConfig.ACTION_TIMER_UPDATE);
                 intent.putExtra(TimerConfig.KEY_TIMER, residueSecond);
                 sendBroadcast(intent);
@@ -561,7 +568,7 @@ public class SAMPlayerService extends Service {
                 if (config.getMode() == TimerConfig.MODE_ABS) {
                     stop();
                 } else {
-                    isAutoPlayNext = false;
+                    isShouldStopPlay = true;
                 }
                 Intent intent = new Intent(TimerConfig.ACTION_TIMER_COMPLETE);
                 sendBroadcast(intent);
@@ -570,7 +577,7 @@ public class SAMPlayerService extends Service {
             @Override
             public void onTimerStop(TimerConfig config) {
                 SAMLog.i(TAG, "onTimerStop");
-                isAutoPlayNext = true;
+                isShouldStopPlay = false;
                 Intent intent = new Intent(TimerConfig.ACTION_TIMER_STOP);
                 sendBroadcast(intent);
             }

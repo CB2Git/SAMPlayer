@@ -14,7 +14,8 @@ TODO
 
 + [基础功能](https://github.com/CB2Git/SAMPlayer/blob/master/md/基础功能.md)
 + [播放拦截器](https://github.com/CB2Git/SAMPlayer/blob/master/md/播放拦截器.md)
-+ [一句话添加缓存功能](https://github.com/CB2Git/SAMPlayer/blob/master/md/播放拦截器.md)
-+ [通知栏](https://github.com/CB2Git/SAMPlayer/blob/master/md/%E9%80%9A%E7%9F%A5%E6%A0%8F.md)
-+ [播放历史以及流水上报](https://github.com/CB2Git/SAMPlayer/blob/master/md/%E6%92%AD%E6%94%BE%E5%8E%86%E5%8F%B2%E4%BB%A5%E5%8F%8A%E6%B5%81%E6%B0%B4%E4%B8%8A%E6%8A%A5.md)
++ [一句话添加缓存功能](https://github.com/CB2Git/SAMPlayer/blob/master/md/添加缓存.md)
++ [通知栏](https://github.com/CB2Git/SAMPlayer/blob/master/md/通知栏.md)
++ [定时停止播放](https://github.com/CB2Git/SAMPlayer/blob/master/md/定时停止播放.md)
++ [播放历史以及流水上报](https://github.com/CB2Git/SAMPlayer/blob/master/md/播放历史以及流水上报.md)
 
