@@ -42,9 +42,20 @@ dependencies {
         implementation project(':samplayer_ijk_player')
         implementation project(':samplayer_cache')
     }else{
-        implementation "com.github.CB2Git.SAMPlayer:samplayer_cache:${versions.release_version}"
-        implementation "com.github.CB2Git.SAMPlayer:samplayer_exo:${versions.release_version}"
-        implementation "com.github.CB2Git.SAMPlayer:samplayer_ijk_player:${versions.release_version}"
         implementation "com.github.CB2Git.SAMPlayer:samplayer_java:${versions.release_version}"
+        implementation "tv.danmaku.ijk.media:ijkplayer-java:${versions.ijk}"
+
+        implementation "com.github.CB2Git.SAMPlayer:samplayer_cache:${versions.release_version}"
+        implementation "com.danikula:videocache:${versions.videocache}"
+
+        implementation "com.github.CB2Git.SAMPlayer:samplayer_exo:${versions.release_version}"
+        implementation "tv.danmaku.ijk.media:ijkplayer-exo:${versions.ijk}"
+
+        implementation "com.github.CB2Git.SAMPlayer:samplayer_ijk_player:${versions.release_version}"
+        implementation "tv.danmaku.ijk.media:ijkplayer-armv7a:${versions.ijk}"
+        implementation "tv.danmaku.ijk.media:ijkplayer-armv5:${versions.ijk}"
+        //implementation "tv.danmaku.ijk.media:ijkplayer-arm64:${versions.ijk}"
+        implementation "tv.danmaku.ijk.media:ijkplayer-x86:${versions.ijk}"
+        //implementation "tv.danmaku.ijk.media:ijkplayer-x86_64:${versions.ijk}"
     }
 }

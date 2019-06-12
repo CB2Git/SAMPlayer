@@ -33,7 +33,7 @@ dependencies {
     testImplementation "junit:junit:${versions.junit}"
     androidTestImplementation "com.android.support.test:runner:${versions.runner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso_core}"
-    api "tv.danmaku.ijk.media:ijkplayer-java:${versions.ijk}"
+    implementation "tv.danmaku.ijk.media:ijkplayer-java:${versions.ijk}"
 }
 
 task sourcesJar(type: Jar) {

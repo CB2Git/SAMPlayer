@@ -37,7 +37,7 @@ dependencies {
 
     compileOnly project(':samplayer_java')
 
-    api "com.danikula:videocache:${versions.videocache}"
+    implementation "com.danikula:videocache:${versions.videocache}"
 }
 
 task sourcesJar(type: Jar) {

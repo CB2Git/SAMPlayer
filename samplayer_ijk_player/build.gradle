@@ -35,10 +35,10 @@ dependencies {
 
     compileOnly project(':samplayer_java')
 
-    api "tv.danmaku.ijk.media:ijkplayer-armv7a:${versions.ijk}"
-    api "tv.danmaku.ijk.media:ijkplayer-armv5:${versions.ijk}"
+    implementation "tv.danmaku.ijk.media:ijkplayer-armv7a:${versions.ijk}"
+    implementation "tv.danmaku.ijk.media:ijkplayer-armv5:${versions.ijk}"
     //implementation "tv.danmaku.ijk.media:ijkplayer-arm64:${versions.ijk}"
-    api "tv.danmaku.ijk.media:ijkplayer-x86:${versions.ijk}"
+    implementation "tv.danmaku.ijk.media:ijkplayer-x86:${versions.ijk}"
     //implementation "tv.danmaku.ijk.media:ijkplayer-x86_64:${versions.ijk}"
 }
 

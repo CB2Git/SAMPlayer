@@ -35,7 +35,7 @@ dependencies {
     compileOnly project(':samplayer_java')
 
     compileOnly "tv.danmaku.ijk.media:ijkplayer-java:${versions.ijk}"
-    api "tv.danmaku.ijk.media:ijkplayer-exo:${versions.ijk}"
+    implementation "tv.danmaku.ijk.media:ijkplayer-exo:${versions.ijk}"
 }
 
 task sourcesJar(type: Jar) {
