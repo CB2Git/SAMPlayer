@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.samplayer.core'
+group='com.github.CB2Git'
 
 android {
     compileSdkVersion build_versions.compile_sdk_version
