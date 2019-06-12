@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.samplayer.core'
 
 android {
     compileSdkVersion build_versions.compile_sdk_version
