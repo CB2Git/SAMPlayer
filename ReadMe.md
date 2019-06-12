@@ -48,7 +48,7 @@ implementation "tv.danmaku.ijk.media:ijkplayer-x86:XXX"
 
 之所以需要手动集成ijk的原因是jitpack生成pom文件中没有携带依赖信息，如果有人知道如何解决可以提交pr
 
-
+[Demo下载地址](https://github.com/CB2Git/SAMPlayer/releases)
 
 使用文档
 
