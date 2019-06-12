@@ -35,9 +35,42 @@ dependencies {
 
     compileOnly project(':samplayer_java')
 
-    implementation "tv.danmaku.ijk.media:ijkplayer-armv7a:${versions.ijk}"
-    implementation "tv.danmaku.ijk.media:ijkplayer-armv5:${versions.ijk}"
+    api "tv.danmaku.ijk.media:ijkplayer-armv7a:${versions.ijk}"
+    api "tv.danmaku.ijk.media:ijkplayer-armv5:${versions.ijk}"
     //implementation "tv.danmaku.ijk.media:ijkplayer-arm64:${versions.ijk}"
-    implementation "tv.danmaku.ijk.media:ijkplayer-x86:${versions.ijk}"
+    api "tv.danmaku.ijk.media:ijkplayer-x86:${versions.ijk}"
     //implementation "tv.danmaku.ijk.media:ijkplayer-x86_64:${versions.ijk}"
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.sourceFiles
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+//防止生成的文档中文乱码
+tasks.withType(Javadoc) {
+    options{
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        links "http://docs.oracle.com/javase/7/docs/api"
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task classesJar(type: Jar) {
+    from "$buildDir/intermediates/classes/release"
+}
+
+artifacts {
+    archives classesJar
+    archives javadocJar
+    archives sourcesJar
 }

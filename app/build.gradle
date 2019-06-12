@@ -35,8 +35,16 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
     implementation "com.android.support:recyclerview-v7:${versions.v7}"
     implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
-    implementation project(':samplayer_java')
-    implementation project(':samplayer_exo')
-    implementation project(':samplayer_ijk_player')
-    implementation project(':samplayer_cache')
+
+    if (isDebug.toBoolean()){
+        implementation project(':samplayer_java')
+        implementation project(':samplayer_exo')
+        implementation project(':samplayer_ijk_player')
+        implementation project(':samplayer_cache')
+    }else{
+        implementation "com.github.CB2Git.SAMPlayer:samplayer_cache:${versions.release_version}"
+        implementation "com.github.CB2Git.SAMPlayer:samplayer_exo:${versions.release_version}"
+        implementation "com.github.CB2Git.SAMPlayer:samplayer_ijk_player:${versions.release_version}"
+        implementation "com.github.CB2Git.SAMPlayer:samplayer_java:${versions.release_version}"
+    }
 }
