@@ -13,7 +13,7 @@ public interface ServiceSessionListener {
     /**
      * Service断开连接
      *
-     * @param isError true Service异常退出连接<br/>
+     * @param isError true Service异常退出连接<p></p>
      *                false 主动断开连接
      */
     void onServiceDisconnect(boolean isError);

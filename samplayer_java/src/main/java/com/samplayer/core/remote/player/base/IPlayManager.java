@@ -34,7 +34,7 @@ public interface IPlayManager {
      * 播放指定的音乐
      *
      * @param songInfo    音乐信息
-     * @param allowReplay 是否允许重新开始播放<br/>
+     * @param allowReplay 是否允许重新开始播放<p><p/>
      *                    true  当正在播放此歌曲的时候会重新开始播放
      *                    false  当正在播放此歌曲的时候不做任何处理  没有播放则会开始播放
      */

@@ -14,9 +14,9 @@ import com.samplayer.utils.SAMLog;
 
 /**
  * 用于客户端配置自己的通知栏
- * <br/>
- * <b>注意:这个回调是运行在播放进程的！！！！</b><br/>
- * <b>注意:这个回调是运行在播放进程的！！！！</b><br/>
+ * <p></p>
+ * <b>注意:这个回调是运行在播放进程的！！！！</b><p></p>
+ * <b>注意:这个回调是运行在播放进程的！！！！</b><p></p>
  * <b>注意:这个回调是运行在播放进程的！！！！</b>
  */
 public abstract class NotificationConfig extends BroadcastReceiver {

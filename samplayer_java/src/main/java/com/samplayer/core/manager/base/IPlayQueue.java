@@ -14,8 +14,8 @@ public interface IPlayQueue {
     /**
      * 设置当前循环模式
      *
-     * @param circulationMode 单曲播放 {@link com.samplayer.core.manager.circulation.SingleCirculationMode}<br/>
-     *                        循环播放 {@link com.samplayer.core.manager.circulation.OrderCirculationMode}<br/>
+     * @param circulationMode <p>单曲播放 {@link com.samplayer.core.manager.circulation.SingleCirculationMode}</p>
+     *                        <p>循环播放 {@link com.samplayer.core.manager.circulation.OrderCirculationMode}</p>
      *                        随机播放 {@link com.samplayer.core.manager.circulation.ShuffleCirculationMode}
      */
     void setCirculationMode(ICirculationMode circulationMode);

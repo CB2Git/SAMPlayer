@@ -18,7 +18,7 @@ public interface IPlayer {
      * 设置是否自动连接
      *
      * @param auto true 当执行一个操作但是没有连接的时候会自动连接
-     *             注意:<b>没有连接前的操作会被忽略掉<b/>
+     *             <p>注意:没有连接前的操作会被忽略掉</p>
      */
     void setAutoConnect(boolean auto);
 
