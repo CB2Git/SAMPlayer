@@ -1,9 +1,5 @@
 apply plugin: 'com.android.library'
 
-apply plugin: 'com.github.dcendents.android-maven'
-
-group='com.github.CB2Git'
-
 android {
     compileSdkVersion build_versions.compile_sdk_version
 
@@ -38,36 +34,23 @@ dependencies {
     implementation "tv.danmaku.ijk.media:ijkplayer-exo:${versions.ijk}"
 }
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.sourceFiles
+ext {
+    package_repo = PROJ_USER_MAVEN
+    package_type = 'aar'
+    package_group = PROJ_GROUP
+    package_artifact = PROJ_ARTIFACTID
+    package_version = PROJ_VERSION
+    package_description = PROJ_DESCRIPTION
+
+    siteUrl = PROJ_WEBSITEURL
+
+    developerId = DEVELOPER_ID
+    developerName = DEVELOPER_NAME
+    developerEmail = DEVELOPER_EMAIL
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = 'Apache-2.0'
 }
 
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-//防止生成的文档中文乱码
-tasks.withType(Javadoc) {
-    options{
-        encoding "UTF-8"
-        charSet 'UTF-8'
-        links "http://docs.oracle.com/javase/7/docs/api"
-    }
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-task classesJar(type: Jar) {
-    from "$buildDir/intermediates/classes/release"
-}
-
-artifacts {
-    archives classesJar
-    archives javadocJar
-    archives sourcesJar
-}
+apply from:'../bintray.gradle'

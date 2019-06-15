@@ -11,7 +11,7 @@ import com.samplayer.utils.SAMLog;
 /**
  * 管理播放器的音频焦点
  *
- * @url https://github.com/kesenhoo/android-training-course-in-chinese/blob/master/multimedia/audio/audio-focus.md
+ *  https://github.com/kesenhoo/android-training-course-in-chinese/blob/master/multimedia/audio/audio-focus.md
  */
 public class AudioFocusManager implements AudioManager.OnAudioFocusChangeListener {
 

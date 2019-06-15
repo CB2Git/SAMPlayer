@@ -25,6 +25,6 @@ versions.videocache = "2.7.1"
 versions.BaseRecyclerViewAdapterHelper = "2.9.46"
 
 
-versions.release_version = "1.0"
+versions.release_version = PROJ_VERSION
 
 ext.versions = versions

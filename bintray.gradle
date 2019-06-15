@@ -1,0 +1,144 @@
+apply plugin: 'com.jfrog.bintray'
+
+String defaultValue(key,defaultValue){
+    if(ext.has(key))ext.get(key)
+    else defaultValue
+}
+
+version = package_version
+group = package_group
+
+if (project.getPlugins().findPlugin("com.android.library")){
+    task sourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+
+    task javadoc(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    javadoc {
+        options{
+            encoding "UTF-8"
+            docEncoding "UTF-8"
+            charSet 'UTF-8'
+            author true
+            version true
+            links "http://docs.oracle.com/javase/7/docs/api"
+            failOnError false
+        }
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+} else {
+    task sourcesJar(type: Jar) {
+        from sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    javadoc {
+        options{
+            encoding "UTF-8"
+            docEncoding "UTF-8"
+            charSet 'UTF-8'
+            author true
+            version true
+            links "http://docs.oracle.com/javase/7/docs/api"
+            failOnError false
+        }
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+}
+
+
+
+// Bintray
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+
+
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = package_repo
+        userOrg = defaultValue 'package_userOrg', null
+        name = package_artifact
+        desc = package_description
+        websiteUrl = defaultValue 'siteUrl', ''
+        vcsUrl = defaultValue 'gitUrl', ''
+        def licensesStr = defaultValue 'allLicenses', 'Apache-2.0'
+        licenses = licensesStr.split(',')
+        publish = true
+    }
+}
+
+apply plugin: 'com.github.dcendents.android-maven'
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                if (!ext.has('package_type')){
+                    if (project.getPlugins().findPlugin("com.android.library")){
+                        packaging 'aar'
+                    }else{
+                        packaging 'jar'
+                    }
+                }else{
+                    packaging package_type
+                }
+                groupId package_group
+                artifactId package_artifact
+                // Add your description here
+                name package_artifact
+                description = defaultValue 'package_description', ''
+                url = defaultValue 'siteUrl', ''
+
+                // Set your license
+                licenses {
+                    license {
+                        name = defaultValue 'licenseName', ''
+                        url = defaultValue 'licenseUrl', ''
+                    }
+                }
+                developers {
+                    developer {
+                        id = defaultValue 'developerId', ''
+                        name = defaultValue 'developerName', ''
+                        email = defaultValue 'developerEmail', ''
+                    }
+                }
+                scm {
+                    connection = defaultValue 'gitUrl', ''
+                    developerConnection = defaultValue 'gitUrl', ''
+                    url = defaultValue 'siteUrl', ''
+                }
+            }
+        }
+    }
+}
