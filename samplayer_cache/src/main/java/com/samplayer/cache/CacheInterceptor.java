@@ -34,8 +34,9 @@ public class CacheInterceptor implements Interceptor {
         /**
          * 1.本地url   eg:/storage/emulated/0/netease/cloudmusic/Music/张振宇 - 不要再来伤害我.mp3
          * 2.代理url   eg:http://127.0.0.1
+         * 3.m3u8 一般是直播地址  这个不用缓存
          */
-        if (url.startsWith("/") || url.contains("127.0.0.1")) {
+        if (url.startsWith("/") || url.contains("127.0.0.1") || url.contains(".m3u8")) {
             return false;
         }
         return true;

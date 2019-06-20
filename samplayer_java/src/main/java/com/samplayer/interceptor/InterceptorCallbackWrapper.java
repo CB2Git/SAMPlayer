@@ -24,6 +24,8 @@ public class InterceptorCallbackWrapper implements InterceptorCallback {
 
     private static final int MSG_IN_PROCESS = 100002;
 
+    private static final int MSG_STOP = 100003;
+
     private InterceptorCallback mInterceptorCallback;
 
     private boolean isValid = true;
@@ -77,8 +79,7 @@ public class InterceptorCallbackWrapper implements InterceptorCallback {
                 }
 
             } finally {
-                mHandlerThread.quitSafely();
-                SAMLog.i(TAG, "handleMessage: quitSafely");
+                mCallback.obtainMessage(MSG_STOP).sendToTarget();
             }
         }
     }
@@ -90,8 +91,10 @@ public class InterceptorCallbackWrapper implements InterceptorCallback {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            SAMLog.i(TAG, "handleMessage: MSG = " + msg.what);
             if (!isValid) {
                 SAMLog.i(TAG, "handleMessage: " + isValid);
+                mHandlerThread.quitSafely();
                 return;
             }
             switch (msg.what) {
@@ -103,6 +106,10 @@ public class InterceptorCallbackWrapper implements InterceptorCallback {
                     break;
                 case MSG_IN_PROCESS:
                     mInterceptorCallback.inProcess((SongInfo) msg.obj);
+                    break;
+                case MSG_STOP:
+                    mHandlerThread.quitSafely();
+                    SAMLog.i(TAG, "handleMessage: quitSafely");
                     break;
             }
         }
