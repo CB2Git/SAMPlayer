@@ -40,7 +40,11 @@ public class InterceptorCallbackWrapper implements InterceptorCallback {
         mInterceptorHandler = new InterceptorHandler(mHandlerThread.getLooper(), songInfo, interceptors, mHandler);
     }
 
+    /**
+     * 开始执行拦截器流程
+     */
     public void interceptor() {
+        //发送消息  开始执行拦截器流程
         mInterceptorHandler.sendEmptyMessage(2333);
     }
 
@@ -64,10 +68,13 @@ public class InterceptorCallbackWrapper implements InterceptorCallback {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            //回调 拦截器开始执行
             mCallback.obtainMessage(MSG_IN_PROCESS, mSongInfo).sendToTarget();
             try {
                 RealInterceptorChain realInterceptorChain = new RealInterceptorChain(mInterceptors, 0, mSongInfo);
+                //执行拦截器
                 SongInfo songInfo = realInterceptorChain.proceed(mSongInfo);
+                //执行完毕 并且成功了
                 mCallback.obtainMessage(MSG_CONTINUE, songInfo).sendToTarget();
             } catch (Exception e) {
                 if (e instanceof InterceptorException) {
