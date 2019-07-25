@@ -31,7 +31,9 @@ import com.samplayer.outconfig.NotificationConfig;
 import com.samplayer.outconfig.TimerConfig;
 import com.samplayer.utils.SAMLog;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
@@ -94,6 +96,11 @@ public class SAMPlayerService extends Service {
      * 当定时播放时间到了以后需要停止
      */
     private boolean isShouldStopPlay = false;
+
+    /**
+     * 用与保存开始播放的时候需要seek到指定位置
+     */
+    private Map<String, Long> mSongSeekToQueue = new HashMap<>();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -176,7 +183,7 @@ public class SAMPlayerService extends Service {
             long currentPosition = currentPlayer.getCurrentPosition();
             notifyProgressChange(currentPlayInfo, currentPosition, duration);
             mUpdateProgressHandler.removeMessages(MSG_TIME_UPDATE);
-            mUpdateProgressHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
+            mUpdateProgressHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 950);
         }
     };
 
@@ -235,6 +242,17 @@ public class SAMPlayerService extends Service {
             private boolean isInErrorState = false;
 
             @Override
+            public void onPrepareStart(SongInfo songInfo) {
+                //当播放器调用prepareAsync 但是还没prepare完毕的时候就去通知ui更新(用户体验？)
+                onPlayableStart(songInfo);
+            }
+
+            @Override
+            public void onPrepare(IMediaPlayer iMediaPlayer) {
+                isInErrorState = false;
+            }
+
+            @Override
             public void onPlayableStart(SongInfo songInfo) {
                 isInErrorState = false;
                 notifyPlayableStart(songInfo);
@@ -246,6 +264,15 @@ public class SAMPlayerService extends Service {
                 notifyStart();
                 notifyNotificationPlay();
                 mUpdateProgressHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
+
+                //当播放的时候发现需要seekTo到某个位置  则操作
+                long seekMap = getSeekMap(mPlayerManager.getCurrentPlayInfo(), true);
+                if (seekMap > 0) {
+                    IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
+                    if (currentPlayer != null) {
+                        currentPlayer.seekTo(seekMap);
+                    }
+                }
             }
 
             @Override
@@ -295,6 +322,10 @@ public class SAMPlayerService extends Service {
 
             @Override
             public void onError(int what, int extra) {
+                //-38错误  调用播放器的方法但是播放器状态不对产生的错误
+                if (what == -38) {
+                    return;
+                }
                 isInErrorState = true;
                 notifyError(what, extra);
                 mUpdateProgressHandler.removeMessages(MSG_TIME_UPDATE);
@@ -403,13 +434,41 @@ public class SAMPlayerService extends Service {
         }
     }
 
-
     public void playItem(SongInfo songInfo) {
         int i = mPlayQueueManager.skipToItem(songInfo);
         SAMLog.i(TAG, "playItem: " + i);
+        putSeekMap(songInfo, 0);
         play();
     }
 
+    public void playStartAt(SongInfo songInfo, long ms) {
+        putSeekMap(songInfo, ms);
+        int i = mPlayQueueManager.skipToItem(songInfo);
+        SAMLog.i(TAG, "playStartAt: " + i + ",seekTo：" + ms);
+        play();
+    }
+
+    private void putSeekMap(SongInfo songInfo, long ms) {
+        if (songInfo == null) {
+            return;
+        }
+        String key = String.format("%s#%s", songInfo.getSongId(), songInfo.getSongUrl());
+        mSongSeekToQueue.put(key, ms);
+    }
+
+    private long getSeekMap(SongInfo songInfo, boolean autoDel) {
+        if (songInfo == null) {
+            return -1;
+        }
+        String key = String.format("%s#%s", songInfo.getSongId(), songInfo.getSongUrl());
+        Long seekTo;
+        if (autoDel) {
+            seekTo = mSongSeekToQueue.remove(key);
+        } else {
+            seekTo = mSongSeekToQueue.get(key);
+        }
+        return seekTo == null ? 0 : seekTo;
+    }
 
     public void setPlayMode(int playMode) {
         ICirculationMode circulationMode;
@@ -464,14 +523,19 @@ public class SAMPlayerService extends Service {
     }
 
 
-    public long getCurrentPosition() throws RemoteException {
+    public long getCurrentPosition() {
         IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         long currentPosition = currentPlayer.getCurrentPosition();
         return currentPosition;
     }
 
 
-    public long getDuration() throws RemoteException {
+    public long getDuration() {
+        long currentPosition = getCurrentPosition();
+        //这样做的原因是getCurrentPosition有效状态多一点，
+        if (currentPosition == 0) {
+            return 0;
+        }
         IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         long duration = currentPlayer.getDuration();
         return duration;

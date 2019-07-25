@@ -268,6 +268,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     showInfo(config.toString());
                 }
                 break;
+            case R.id.ctrl_play_and_seek:
+                SongInfo info = new SongInfo();
+                info.setSongId("1");
+                info.setArtist("陈奕迅");
+                info.setSongName("不要说话");
+                info.setSongUrl("http://music.163.com/song/media/outer/url?id=25906124.mp3");
+                SAMPlayer.getInstance().getPlayer().playStartAt(info, 30 * 1000);
+                break;
         }
     }
 

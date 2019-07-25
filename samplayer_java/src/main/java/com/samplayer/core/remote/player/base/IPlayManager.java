@@ -26,11 +26,6 @@ public interface IPlayManager {
     void play(SongInfo songInfo);
 
     /**
-     * 设置拦截器
-     */
-    void setInterceptor(List<Interceptor> interceptors);
-
-    /**
      * 播放指定的音乐
      *
      * @param songInfo    音乐信息
@@ -39,6 +34,11 @@ public interface IPlayManager {
      *                    false  当正在播放此歌曲的时候不做任何处理  没有播放则会开始播放
      */
     void play(SongInfo songInfo, boolean allowReplay);
+
+    /**
+     * 设置拦截器
+     */
+    void setInterceptor(List<Interceptor> interceptors);
 
     /**
      * 停止播放
@@ -66,6 +66,20 @@ public interface IPlayManager {
     void setPlayListener(PlayListener listener);
 
     interface PlayListener {
+
+        /**
+         * 开始Prepare
+         * <p>
+         * 播放器调用了prepareAsync
+         *
+         * @param songInfo
+         */
+        void onPrepareStart(SongInfo songInfo);
+
+        /**
+         * 异步结束
+         */
+        void onPrepare(IMediaPlayer iMediaPlayer);
 
         /**
          * 播放回调

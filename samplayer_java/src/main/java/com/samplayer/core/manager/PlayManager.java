@@ -207,6 +207,17 @@ public class PlayManager implements IPlayer, IReleaseAble {
     }
 
     @Override
+    public void playStartAt(SongInfo songInfo, long ms) {
+        if (checkRemoteService()) {
+            try {
+                mServiceSession.getRemoteService().playStartAt(songInfo, ms);
+            } catch (Exception e) {
+                SAMLog.printCause(e);
+            }
+        }
+    }
+
+    @Override
     public void setPlayMode(int playMode) {
         if (checkRemoteService()) {
             try {

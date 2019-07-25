@@ -73,6 +73,15 @@ public interface IPlayer {
      */
     void play(SongInfo songInfo);
 
+    /**
+     * 播放指定音乐并指定开始位置
+     * <p>
+     * 当正在播放此歌曲的时候不做任何处理  没有播放则会开始播放
+     *
+     * @param songInfo 音乐信息
+     * @param ms       开始时间 毫秒
+     */
+    void playStartAt(SongInfo songInfo, long ms);
 
     /**
      * 设置播放模式 {@link com.samplayer.model.PlayMode}

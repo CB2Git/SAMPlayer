@@ -162,7 +162,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             newPlayer.prepareAsync();
             mSongInfo = info;
             if (mPlayListener != null) {
-                mPlayListener.onPlayableStart(info);
+                mPlayListener.onPrepareStart(info);
             }
         } catch (Exception e) {
             SAMLog.printCause(e);
@@ -208,7 +208,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             mMediaPlayer.reset();
             mSongInfo = null;
         }
-        //initMediaPlayer();
+        initMediaPlayer();
         return mMediaPlayer;
     }
 
@@ -218,6 +218,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.stop();
             }
+            mMediaPlayer.reset();
             mMediaPlayer.release();
         }
         mPlayListener = null;
@@ -233,6 +234,9 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
         //播放之前请求音频焦点
         boolean requestFocus = mAudioFocusManager.requestFocus();
         SAMLog.ifmt(TAG, "onPrepared,requestFocus = %s", requestFocus);
+
+        mPlayListener.onPrepare(iMediaPlayer);
+
         iMediaPlayer.start();
         if (mPlayListener != null) {
             mPlayListener.onStart();
