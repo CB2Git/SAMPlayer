@@ -244,12 +244,13 @@ public class SAMPlayerService extends Service {
             @Override
             public void onPrepareStart(SongInfo songInfo) {
                 //当播放器调用prepareAsync 但是还没prepare完毕的时候就去通知ui更新(用户体验？)
-                onPlayableStart(songInfo);
+                notifyPrepareStart(songInfo);
             }
 
             @Override
             public void onPrepare(IMediaPlayer iMediaPlayer) {
                 isInErrorState = false;
+                //异步结束不用回调给客户端，因为会回调onPlayableStart以及onStart
             }
 
             @Override
@@ -717,6 +718,25 @@ public class SAMPlayerService extends Service {
         IPlayerListener listener = mOutConfigInfo.getPlayerListener();
         if (listener != null) {
             listener.onComplete();
+        }
+    }
+
+    private void notifyPrepareStart(SongInfo songInfo) {
+        if (mPlayerCallBack != null) {
+            try {
+                mPlayerCallBack.onPrepareStart(songInfo);
+                mUpdateProgressHandler.removeCallbacksAndMessages(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        notifyOutPrepareStart(songInfo);
+    }
+
+    private void notifyOutPrepareStart(SongInfo songInfo) {
+        IPlayerListener listener = mOutConfigInfo.getPlayerListener();
+        if (listener != null) {
+            listener.onPrepareStart(songInfo);
         }
     }
 

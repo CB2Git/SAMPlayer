@@ -4,7 +4,21 @@ import android.support.annotation.Nullable;
 
 import com.samplayer.model.SongInfo;
 
+import java.util.List;
+
 public interface IPlayerListener {
+
+    /**
+     * 开始Prepare
+     * <p>
+     * 播放器调用了prepareAsync
+     * <p>
+     * <i>在这个回调下面更新ui比较好  因为prepare->start在网络不好的时候可能需要一段时间</i>
+     *
+     * @param songInfo 当前播放的音乐信息
+     */
+    void onPrepareStart(SongInfo songInfo);
+
     /**
      * 音乐播放回调  当切换音乐的时候会回调 但是可能还没有开始播放 准备状态
      * 如果开始播放了则回调{@link IPlayerListener#onStart()}
@@ -53,6 +67,8 @@ public interface IPlayerListener {
 
     /**
      * 停止播放
+     * <p>
+     * 当重新设置播放列表的时候这个也会回调一次{@link com.samplayer.core.manager.base.IPlayer#setPlayList(List, boolean)}
      */
     void onStop();
 

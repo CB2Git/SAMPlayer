@@ -7,6 +7,12 @@ import com.samplayer.model.SongInfo;
  * 注意  这个玩意回调在播放进程
  */
 public class RemotePlayListener extends SimplePlayListener {
+
+    @Override
+    public void onPrepareStart(SongInfo songInfo) {
+        super.onPrepareStart(songInfo);
+    }
+
     @Override
     public void onPlayableStart(SongInfo songinfo) {
         super.onPlayableStart(songinfo);

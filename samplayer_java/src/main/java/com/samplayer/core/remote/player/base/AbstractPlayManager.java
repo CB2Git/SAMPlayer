@@ -87,6 +87,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
     @Override
     public void play(SongInfo songInfo) {
         if (songInfo == null) {
+            SAMLog.w(TAG, "播放信息为null");
             return;
         }
         play(songInfo, true);
@@ -235,10 +236,12 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
         boolean requestFocus = mAudioFocusManager.requestFocus();
         SAMLog.ifmt(TAG, "onPrepared,requestFocus = %s", requestFocus);
 
+        //回调异步结束
         mPlayListener.onPrepare(iMediaPlayer);
 
         iMediaPlayer.start();
         if (mPlayListener != null) {
+            mPlayListener.onPlayableStart(getCurrentPlayInfo());
             mPlayListener.onStart();
         }
     }

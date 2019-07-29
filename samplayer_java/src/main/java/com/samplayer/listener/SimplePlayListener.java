@@ -8,7 +8,12 @@ public class SimplePlayListener implements IPlayerListener {
     private static final String TAG = "SimplePlayListener";
 
     @Override
-    public void onPlayableStart(SongInfo songinfo) {
+    public void onPrepareStart(SongInfo songInfo) {
+        SAMLog.i(TAG, "onPrepareStart ");
+    }
+
+    @Override
+    public void onPlayableStart(SongInfo songInfo) {
         SAMLog.i(TAG, "onPlayableStart ");
     }
 

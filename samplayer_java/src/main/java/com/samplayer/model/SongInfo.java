@@ -5,6 +5,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -57,6 +59,44 @@ public class SongInfo implements Parcelable {
     private String albumArtist = "";     //专辑艺术家
     private int albumSongCount = 0;      //专辑音乐数
     private int albumPlayCount = 0;      //专辑播放数
+
+    private String channelId = "";  //分类id
+    private String channelName = "";    //分类名字
+    private String channelCover = "";   //分类封面
+
+    private Map<String, String> songExtra = new HashMap<>();    //如果上面的字段还不满足，这里可以额外附加数据
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
+    }
+
+    public String getChannelCover() {
+        return channelCover;
+    }
+
+    public void setChannelCover(String channelCover) {
+        this.channelCover = channelCover;
+    }
+
+    public Map<String, String> getSongExtra() {
+        return songExtra;
+    }
+
+    public void setSongExtra(Map<String, String> songExtra) {
+        this.songExtra = songExtra;
+    }
 
     public String getSongId() {
         return songId;
@@ -465,6 +505,14 @@ public class SongInfo implements Parcelable {
         dest.writeString(this.albumArtist);
         dest.writeInt(this.albumSongCount);
         dest.writeInt(this.albumPlayCount);
+        dest.writeString(this.channelId);
+        dest.writeString(this.channelName);
+        dest.writeString(this.channelCover);
+        dest.writeInt(this.songExtra.size());
+        for (Map.Entry<String, String> entry : this.songExtra.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeString(entry.getValue());
+        }
     }
 
     public void readFromParcel(Parcel in) {
@@ -511,6 +559,16 @@ public class SongInfo implements Parcelable {
         this.albumArtist = in.readString();
         this.albumSongCount = in.readInt();
         this.albumPlayCount = in.readInt();
+        this.channelId = in.readString();
+        this.channelName = in.readString();
+        this.channelCover = in.readString();
+        int songExtraSize = in.readInt();
+        this.songExtra = new HashMap<String, String>(songExtraSize);
+        for (int i = 0; i < songExtraSize; i++) {
+            String key = in.readString();
+            String value = in.readString();
+            this.songExtra.put(key, value);
+        }
     }
 
     public static final Creator<SongInfo> CREATOR = new Creator<SongInfo>() {

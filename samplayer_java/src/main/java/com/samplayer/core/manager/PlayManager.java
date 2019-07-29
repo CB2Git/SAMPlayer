@@ -31,6 +31,8 @@ public class PlayManager implements IPlayer, IReleaseAble {
 
     private static final String TAG = "RemotePlayManager";
 
+    private static final int MSG_PREPARE_START = 11;
+
     private static final int MSG_PLAYABLE_START = 1;
 
     private static final int MSG_PROGRESS_CHANGE = 2;
@@ -418,6 +420,11 @@ public class PlayManager implements IPlayer, IReleaseAble {
     private ISAMPlayerCallBack getPlayCallback() {
         return new ISAMPlayerCallBack.Stub() {
             @Override
+            public void onPrepareStart(SongInfo songInfo) throws RemoteException {
+                mHandler.obtainMessage(MSG_PREPARE_START, songInfo).sendToTarget();
+            }
+
+            @Override
             public void onPlayableStart(SongInfo songinfo) throws RemoteException {
                 mHandler.obtainMessage(MSG_PLAYABLE_START, songinfo).sendToTarget();
             }
@@ -482,6 +489,9 @@ public class PlayManager implements IPlayer, IReleaseAble {
                 return;
             }
             switch (msg.what) {
+                case MSG_PREPARE_START:
+                    handlerPrepareStartStartEvent((SongInfo) msg.obj);
+                    break;
                 case MSG_PLAYABLE_START:
                     handlerPlayableStartEvent((SongInfo) msg.obj);
                     break;
@@ -574,6 +584,12 @@ public class PlayManager implements IPlayer, IReleaseAble {
     private void handlerProgressChangeEvent(SongInfo info, long second, long duration) {
         for (IPlayerListener item : mPlayerListeners) {
             item.onProgressChange(info, second, duration);
+        }
+    }
+
+    private void handlerPrepareStartStartEvent(SongInfo songinfo) {
+        for (IPlayerListener item : mPlayerListeners) {
+            item.onPrepareStart(songinfo);
         }
     }
 

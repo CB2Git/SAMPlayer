@@ -92,14 +92,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private SimplePlayListener mSimplePlayListener = new SimplePlayListener() {
+
         @Override
-        public void onPlayableStart(SongInfo songinfo) {
-            super.onPlayableStart(songinfo);
-            mBinding.homeSongTitle.setText(songinfo.getSongName());
+        public void onPrepareStart(SongInfo songInfo) {
+            super.onPrepareStart(songInfo);
+            mBinding.homeSongTitle.setText(songInfo.getSongName());
             mBinding.homeSongProgress.setMax(0);
             mBinding.homeSongProgress.setProgress(0);
             mBinding.homeSongProgress.setSecondaryProgress(0);
             mBinding.homeSongDuring.setText("00:00/00:00");
+        }
+
+        @Override
+        public void onPlayableStart(SongInfo songinfo) {
+            super.onPlayableStart(songinfo);
         }
 
 

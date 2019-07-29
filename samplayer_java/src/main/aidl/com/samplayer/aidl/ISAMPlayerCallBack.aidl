@@ -6,6 +6,17 @@ import com.samplayer.model.SongInfo;
 interface ISAMPlayerCallBack {
 
     /**
+     * 开始Prepare
+     * <p>
+     * 播放器调用了prepareAsync
+     * <p>
+     * <i>在这个回调下面更新ui比较好  因为prepare->start在网络不好的时候可能需要一段时间</i>
+     *
+     * @param songInfo 当前播放的音乐信息
+     */
+    void onPrepareStart(inout SongInfo songInfo);
+
+    /**
      * 音乐播放回调  当切换音乐的时候会回调 但是可能还没有开始播放
      *
      * @param songinfo 当前播放的音乐信息
