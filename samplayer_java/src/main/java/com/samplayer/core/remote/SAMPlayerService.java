@@ -390,6 +390,9 @@ public class SAMPlayerService extends Service {
         mPlayQueueManager.appendPlayList(songInfos);
     }
 
+    public void insertPlayList(int position, List<SongInfo> songInfos) throws RemoteException {
+        mPlayQueueManager.insertPlayList(position, songInfos);
+    }
 
     public List<SongInfo> getPlayList() {
         return mPlayQueueManager.getPlayList();
@@ -443,6 +446,9 @@ public class SAMPlayerService extends Service {
     }
 
     public void playStartAt(SongInfo songInfo, long ms) {
+        if (ms < 0) {
+            ms = 0;
+        }
         putSeekMap(songInfo, ms);
         int i = mPlayQueueManager.skipToItem(songInfo);
         SAMLog.i(TAG, "playStartAt: " + i + ",seekTo：" + ms);

@@ -140,6 +140,17 @@ public class PlayManager implements IPlayer, IReleaseAble {
     }
 
     @Override
+    public void insertPlayList(int position, List<SongInfo> songInfos) {
+        if (checkRemoteService()) {
+            try {
+                mServiceSession.getRemoteService().insertPlayList(position, songInfos);
+            } catch (Exception e) {
+                SAMLog.printCause(e);
+            }
+        }
+    }
+
+    @Override
     public List<SongInfo> getPlayList() {
         if (checkRemoteService()) {
             try {

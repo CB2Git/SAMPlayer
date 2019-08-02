@@ -38,6 +38,13 @@ public class ClientPlayerCmdProxy extends ISAMPlayerService.Stub {
     }
 
     @Override
+    public void insertPlayList(int position, List<SongInfo> songInfos) throws RemoteException {
+        if (mSAMPlayerService != null) {
+            mSAMPlayerService.insertPlayList(position, songInfos);
+        }
+    }
+
+    @Override
     public List<SongInfo> getPlayList() throws RemoteException {
         if (mSAMPlayerService != null) {
             return mSAMPlayerService.getPlayList();

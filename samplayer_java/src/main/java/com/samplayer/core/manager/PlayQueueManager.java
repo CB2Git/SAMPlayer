@@ -52,6 +52,11 @@ public class PlayQueueManager implements IPlayQueue {
     }
 
     @Override
+    public void insertPlayList(int position, List<SongInfo> songInfos) {
+        mSongInfos.addAll(position,songInfos);
+    }
+
+    @Override
     public void clearPlayList() {
         mSongInfos.clear();
         mIndex = ICirculationMode.UN_POSITION;

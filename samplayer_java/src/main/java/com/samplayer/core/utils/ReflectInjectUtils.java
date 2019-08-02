@@ -12,7 +12,6 @@ public class ReflectInjectUtils {
             Object instance = declaredConstructor.newInstance();
             return (T) instance;
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }

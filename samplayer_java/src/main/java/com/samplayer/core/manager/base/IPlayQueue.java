@@ -43,6 +43,14 @@ public interface IPlayQueue {
     void appendPlayList(List<SongInfo> songInfos);
 
     /**
+     * 添加播放列表到指定位置
+     *
+     * @param position
+     * @param songInfos
+     */
+    void insertPlayList(int position, List<SongInfo> songInfos);
+
+    /**
      * 清空播放列表
      */
     void clearPlayList();

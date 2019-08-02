@@ -29,6 +29,8 @@ implementation "com.github.CB2Git.SAMPlayer:samplayer_ijk_player:XXX"
 
 [Demo下载地址](https://github.com/CB2Git/SAMPlayer/releases)
 
+![Demo截图](https://raw.githubusercontent.com/CB2Git/SAMPlayer/master/md/screenshot/01.jpg)
+
 使用文档
 
 + [基础功能](https://github.com/CB2Git/SAMPlayer/blob/master/md/基础功能.md)
