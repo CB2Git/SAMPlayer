@@ -21,6 +21,7 @@ import com.samplayer.core.manager.circulation.ShuffleCirculationMode;
 import com.samplayer.core.manager.circulation.SingleCirculationMode;
 import com.samplayer.core.remote.player.PlayerFactory;
 import com.samplayer.core.remote.player.base.IPlayManager;
+import com.samplayer.core.remote.player.cmd.AudioFocusManager;
 import com.samplayer.core.remote.player.cmd.CmdHandlerHelper;
 import com.samplayer.core.remote.player.cmd.TimerHandler;
 import com.samplayer.listener.IPlayerListener;
@@ -102,6 +103,11 @@ public class SAMPlayerService extends Service {
      */
     private Map<String, Long> mSongSeekToQueue = new HashMap<>();
 
+    /**
+     * 音频焦点管理
+     */
+    private AudioFocusManager mAudioFocusManager;
+
     @Override
     public IBinder onBind(Intent intent) {
         return mClientPlayerCmdProxy;
@@ -123,6 +129,11 @@ public class SAMPlayerService extends Service {
         mPlayerManager = PlayerFactory.create(this);
         //播放器监听
         mPlayerManager.setPlayListener(getOnPlayListener());
+
+        //音频焦点管理以及监听
+        mAudioFocusManager = AudioFocusManager.getInstance();
+        mAudioFocusManager.setOnAudioFocusChangeListener(mOnAudioFocusChangeListener);
+
 
         //播放命令监听
         CmdHandlerHelper.init(getCmdHandler());
@@ -160,6 +171,9 @@ public class SAMPlayerService extends Service {
         stop();
         //释放播放器
         mPlayerManager.release();
+        if (mAudioFocusManager != null) {
+            mAudioFocusManager.abandonFocus();
+        }
         //通知栏释放
         NotificationConfig notificationConfig = mOutConfigInfo.getNotificationConfig();
         if (notificationConfig != null) {
@@ -169,6 +183,39 @@ public class SAMPlayerService extends Service {
         SAMLog.i(TAG, "SAMPlayerService  onDestroy");
     }
 
+
+    private AudioFocusManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioFocusManager.OnAudioFocusChangeListener() {
+
+        private boolean mBreakBySystem = false;
+
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            switch (focusChange) {
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                    //如果正在播放，那么暂停并标记
+                    if (isPlaying()) {
+                        mBreakBySystem = true;
+                        pause();
+                    }
+                    break;
+                case AudioManager.AUDIOFOCUS_GAIN:
+                    //如果被系统打断了播放，那么继续播放
+                    if (mBreakBySystem) {
+                        start();
+                        mBreakBySystem = false;
+                    }
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS:
+                    pause();
+                    mAudioFocusManager.abandonFocus();
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                    // Lower the volume
+                    //TODO
+                    break;
+            }
+        }
+    };
 
     /**
      * 刷新播放时长的
@@ -365,6 +412,8 @@ public class SAMPlayerService extends Service {
         IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         //当没有播放任何音乐的时候不能开始
         if (mPlayerManager.getCurrentPlayInfo() != null && !currentPlayer.isPlaying()) {
+            //当开始播放的时候请求音频焦点
+            mAudioFocusManager.requestFocus();
             currentPlayer.start();
             mUpdateProgressHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
             notifyStart();
@@ -434,6 +483,8 @@ public class SAMPlayerService extends Service {
         if (current == null) {
             SAMLog.e(TAG, "play: 播放失败  歌曲信息为null");
         } else {
+            //当开始播放的时候请求音频焦点
+            mAudioFocusManager.requestFocus();
             mPlayerManager.play(current, false);
         }
     }

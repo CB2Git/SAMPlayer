@@ -69,7 +69,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
     };
 
     public AbstractPlayManager(Context context) {
-        mAudioFocusManager = new AudioFocusManager(context);
+        mAudioFocusManager = AudioFocusManager.getInstance();
     }
 
     private void initMediaPlayer() {
@@ -82,7 +82,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
         mMediaPlayer.setOnCompletionListener(this);
     }
 
-    public abstract IMediaPlayer createMediaPlayer();
+    protected abstract IMediaPlayer createMediaPlayer();
 
     @Override
     public void play(SongInfo songInfo) {

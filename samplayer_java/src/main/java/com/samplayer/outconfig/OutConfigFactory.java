@@ -70,7 +70,6 @@ public class OutConfigFactory {
         try {
             return cls.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }
