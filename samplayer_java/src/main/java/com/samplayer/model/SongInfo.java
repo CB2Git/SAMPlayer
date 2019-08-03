@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * 面向用户的音频信息  from:https://github.com/EspoirX/StarrySky
  * <p>
- * note：由音乐id以及音乐url唯一确定是不是同一首歌 {@link SongInfo#equals(Object)}
+ * note：由音乐id唯一确定是不是同一首歌 {@link SongInfo#equals(Object)}
  */
 public class SongInfo implements Parcelable {
     private String songId = ""; //音乐id
@@ -450,8 +450,7 @@ public class SongInfo implements Parcelable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         SongInfo songInfo = (SongInfo) obj;
-        return Objects.equals(songId, songInfo.getSongId()) &&
-                Objects.equals(songUrl, songInfo.getSongUrl());
+        return Objects.equals(songId, songInfo.getSongId());
     }
 
 
