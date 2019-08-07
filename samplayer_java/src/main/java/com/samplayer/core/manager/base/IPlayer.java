@@ -73,6 +73,11 @@ public interface IPlayer {
     void play();
 
     /**
+     * 暂停播放
+     */
+    void pause();
+
+    /**
      * 播放指定音乐
      * <p>
      * 当正在播放此歌曲的时候不做任何处理  没有播放则会开始播放
@@ -108,6 +113,9 @@ public interface IPlayer {
 
     /**
      * 切换播放状态
+     * <p>
+     * 如果当前播放失败了，那么调用这个方法相当于调用了{@link IPlayer#play()}
+     * 会重新播放当前歌曲
      */
     void toggle();
 
@@ -161,6 +169,8 @@ public interface IPlayer {
 
     /**
      * 获取当前正在播放的歌曲
+     * <p>
+     * 当播放失败，那么这个方法会返回null，但是调用{@link IPlayer#toggle()}方法会尝试重新播放
      *
      * @return 如果没有播放中的歌曲 则返回null
      */

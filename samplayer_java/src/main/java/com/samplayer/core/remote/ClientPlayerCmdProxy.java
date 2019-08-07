@@ -83,6 +83,13 @@ public class ClientPlayerCmdProxy extends ISAMPlayerService.Stub {
     }
 
     @Override
+    public void pause() throws RemoteException {
+        if (mSAMPlayerService != null) {
+            mSAMPlayerService.pause();
+        }
+    }
+
+    @Override
     public void playItem(SongInfo songInfo) throws RemoteException {
         if (mSAMPlayerService != null) {
             mSAMPlayerService.playItem(songInfo);

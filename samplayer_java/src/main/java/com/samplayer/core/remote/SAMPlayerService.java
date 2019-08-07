@@ -394,7 +394,7 @@ public class SAMPlayerService extends Service {
     /**
      * 暂停播放
      */
-    private void pause() {
+    void pause() {
         IMediaPlayer currentPlayer = mPlayerManager.getCurrentPlayer();
         if (currentPlayer.isPlaying()) {
             currentPlayer.pause();
@@ -418,6 +418,9 @@ public class SAMPlayerService extends Service {
             mUpdateProgressHandler.sendEmptyMessageDelayed(MSG_TIME_UPDATE, 900);
             notifyStart();
             notifyNotificationPlay();
+        } else {
+            SAMLog.i(TAG, "start: 当前没有播放任何音乐，直接选择播放");
+            play();
         }
     }
 

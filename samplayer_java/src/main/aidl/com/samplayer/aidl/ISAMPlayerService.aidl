@@ -58,6 +58,11 @@ interface ISAMPlayerService {
     void play();
 
     /**
+     * 暂停播放
+     */
+    void pause();
+
+    /**
      * 播放指定音乐
      * <p>
      * 当指定的音乐不在队列中不做任何处理
