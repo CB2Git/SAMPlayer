@@ -121,6 +121,10 @@ public class PlayManager implements IPlayer, IReleaseAble {
     public void setPlayList(List<SongInfo> songInfos, boolean autoPlay) {
         if (checkRemoteService()) {
             try {
+                if (songInfos == null || songInfos.size() <= 0) {
+                    SAMLog.w(TAG, "setPlayList: 播放列表为空");
+                    return;
+                }
                 mServiceSession.getRemoteService().setPlayList(songInfos, autoPlay);
             } catch (Exception e) {
                 SAMLog.printCause(e);
@@ -132,6 +136,10 @@ public class PlayManager implements IPlayer, IReleaseAble {
     public void appendPlayList(List<SongInfo> songInfos) {
         if (checkRemoteService()) {
             try {
+                if (songInfos == null || songInfos.size() <= 0) {
+                    SAMLog.w(TAG, "appendPlayList: 播放列表为空");
+                    return;
+                }
                 mServiceSession.getRemoteService().appendPlayList(songInfos);
             } catch (Exception e) {
                 SAMLog.printCause(e);
@@ -143,6 +151,10 @@ public class PlayManager implements IPlayer, IReleaseAble {
     public void insertPlayList(int position, List<SongInfo> songInfos) {
         if (checkRemoteService()) {
             try {
+                if (songInfos == null || songInfos.size() <= 0) {
+                    SAMLog.w(TAG, "insertPlayList: 播放列表为空");
+                    return;
+                }
                 mServiceSession.getRemoteService().insertPlayList(position, songInfos);
             } catch (Exception e) {
                 SAMLog.printCause(e);
@@ -382,6 +394,7 @@ public class PlayManager implements IPlayer, IReleaseAble {
     @Override
     public void addPlayListener(IPlayerListener listener) {
         if (listener == null) {
+            SAMLog.w(TAG, "addPlayListener:监听为null");
             return;
         }
         if (mPlayerListeners.contains(listener)) {
@@ -394,6 +407,7 @@ public class PlayManager implements IPlayer, IReleaseAble {
     @Override
     public void removeListener(IPlayerListener listener) {
         if (listener == null) {
+            SAMLog.w(TAG, "removeListener:监听为null");
             return;
         }
         mPlayerListeners.remove(listener);
