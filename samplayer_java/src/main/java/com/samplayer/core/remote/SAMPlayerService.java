@@ -14,6 +14,8 @@ import android.os.Message;
 import android.os.RemoteException;
 
 import com.samplayer.aidl.ISAMPlayerCallBack;
+import com.samplayer.core.manager.MediaSessionManager;
+import com.samplayer.core.manager.MediaStyleNotificationManager;
 import com.samplayer.core.manager.PlayQueueManager;
 import com.samplayer.core.manager.base.ICirculationMode;
 import com.samplayer.core.manager.circulation.OrderCirculationMode;
@@ -108,6 +110,15 @@ public class SAMPlayerService extends Service {
      */
     private AudioFocusManager mAudioFocusManager;
 
+
+    /**
+     * 媒体播放器MediaSession的管理
+     */
+    private MediaSessionManager mMediaSessionManager;
+
+
+    private MediaStyleNotificationManager mMediaStyleNotificationManager;
+
     @Override
     public IBinder onBind(Intent intent) {
         return mClientPlayerCmdProxy;
@@ -134,6 +145,10 @@ public class SAMPlayerService extends Service {
         mAudioFocusManager = AudioFocusManager.getInstance();
         mAudioFocusManager.setOnAudioFocusChangeListener(mOnAudioFocusChangeListener);
 
+        //Session的管理
+        mMediaSessionManager = new MediaSessionManager(this);
+
+        mMediaStyleNotificationManager = new MediaStyleNotificationManager(this, mMediaSessionManager.getSessionToken());
 
         //播放命令监听
         CmdHandlerHelper.init(getCmdHandler());
@@ -174,6 +189,15 @@ public class SAMPlayerService extends Service {
         if (mAudioFocusManager != null) {
             mAudioFocusManager.abandonFocus();
         }
+
+        if (mMediaStyleNotificationManager != null) {
+            mMediaStyleNotificationManager.cancelNotification(this);
+        }
+
+        if (mMediaSessionManager != null) {
+            mMediaSessionManager.release();
+        }
+
         //通知栏释放
         NotificationConfig notificationConfig = mOutConfigInfo.getNotificationConfig();
         if (notificationConfig != null) {
@@ -422,6 +446,11 @@ public class SAMPlayerService extends Service {
             SAMLog.i(TAG, "start: 当前没有播放任何音乐，直接选择播放");
             play();
         }
+
+        //QSS设置为正在播放
+        mMediaSessionManager.setActive(true);
+        mMediaSessionManager.updatePlaybackState(true);
+        mMediaStyleNotificationManager.notifyNotification(this);
     }
 
 
@@ -761,6 +790,10 @@ public class SAMPlayerService extends Service {
         if (listener != null) {
             listener.onError(what, extra);
         }
+        //QSS设置为暂停播放
+        mMediaSessionManager.setActive(false);
+        mMediaSessionManager.updatePlaybackState(false);
+        mMediaStyleNotificationManager.notifyNotification(getApplication());
     }
 
     private void notifyComplete() {
@@ -791,6 +824,11 @@ public class SAMPlayerService extends Service {
             }
         }
         notifyOutPrepareStart(songInfo);
+
+        //设置QSS信息
+        mMediaSessionManager.setActive(true);
+        mMediaSessionManager.updatePlaybackState(true);
+        mMediaStyleNotificationManager.notifyNotification(getApplication(), songInfo.getSongName(), songInfo.getAlbumName());
     }
 
     private void notifyOutPrepareStart(SongInfo songInfo) {
@@ -881,6 +919,10 @@ public class SAMPlayerService extends Service {
             }
         }
         notifyOutPause();
+
+        //QSS设置为暂停播放
+        mMediaSessionManager.updatePlaybackState(false);
+        mMediaStyleNotificationManager.notifyNotification(getApplication());
     }
 
     private void notifyOutPause() {
@@ -899,6 +941,11 @@ public class SAMPlayerService extends Service {
             }
         }
         notifyOutStart();
+
+        //QSS设置为开始播放了
+        mMediaSessionManager.setActive(true);
+        mMediaSessionManager.updatePlaybackState(true);
+        mMediaStyleNotificationManager.notifyNotification(getApplication());
     }
 
     private void notifyOutStart() {
@@ -917,6 +964,10 @@ public class SAMPlayerService extends Service {
             }
         }
         notifyOutStop();
+
+        //QSS 取消
+        mMediaSessionManager.setActive(false);
+        mMediaStyleNotificationManager.cancelNotification(getApplication());
     }
 
     private void notifyOutStop() {
