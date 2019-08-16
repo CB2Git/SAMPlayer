@@ -15,9 +15,21 @@ android {
             abiFilters 'armeabi', 'armeabi-v7a', 'x86'
         }
     }
+
+    signingConfigs {
+        release {
+            keyAlias 'debug'
+            keyPassword 'debugdebug'
+            storeFile file('../debug.jks')
+            storePassword 'debugdebug'
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -36,12 +48,12 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:${versions.v7}"
     implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:${versions.BaseRecyclerViewAdapterHelper}"
 
-    if (isDebug.toBoolean()){
+    if (isDebug.toBoolean()) {
         implementation project(':samplayer_java')
         implementation project(':samplayer_exo')
         implementation project(':samplayer_ijk_player')
         implementation project(':samplayer_cache')
-    }else{
+    } else {
         implementation 'com.github.SAMPlayer:samplayer_java:1.0.1'
         implementation 'com.github.SAMPlayer:samplayer_cache:1.0.1'
         implementation 'com.github.SAMPlayer:samplayer_exo:1.0.1'
