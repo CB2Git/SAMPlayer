@@ -30,6 +30,7 @@ dependencies {
     androidTestImplementation "com.android.support.test:runner:${versions.runner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso_core}"
     implementation "tv.danmaku.ijk.media:ijkplayer-java:${versions.ijk}"
+    implementation "com.android.support:support-media-compat:${versions.v7}"
 }
 
 
