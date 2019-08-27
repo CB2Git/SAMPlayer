@@ -19,3 +19,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep public class * implements android.os.Parcelable{*;}
+
+-keep class com.samplayer.core.remote.player.base.AbstractPlayManager
+-keep class * extends com.samplayer.core.remote.player.base.AbstractPlayManager {*;}
+
+-keep class com.samplayer.interceptor.Interceptor
+-keep class * extends com.samplayer.interceptor.Interceptor {*;}
+
+-keep class com.samplayer.outconfig.NotificationConfig
+-keep class * extends com.samplayer.outconfig.NotificationConfig {*;}
