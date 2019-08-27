@@ -453,6 +453,10 @@ public class SongInfo implements Parcelable {
         return Objects.equals(songId, songInfo.getSongId());
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(songId);
+    }
 
     @Override
     public int describeContents() {
