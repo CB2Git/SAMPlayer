@@ -26,7 +26,7 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 
             SAMLog.ifmt(TAG, "onReceive: keycode = %d,action=%d", keycode, event.getAction());
 
-            //只响应按下时间
+            //只响应按下事件
             if (event.getAction() == KeyEvent.ACTION_UP) {
                 return;
             }
@@ -52,6 +52,10 @@ public class MediaButtonReceiver extends BroadcastReceiver {
                 case KeyEvent.KEYCODE_MEDIA_PAUSE:
                     //暂停
                     CmdHandlerHelper.sendCmd(CmdHandlerHelper.CMD_PAUSE);
+                    break;
+                case KeyEvent.KEYCODE_MEDIA_STOP:
+                    //停止播放
+                    CmdHandlerHelper.sendCmd(CmdHandlerHelper.CMD_STOP);
                     break;
                 default:
                     break;

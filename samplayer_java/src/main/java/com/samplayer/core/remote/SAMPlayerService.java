@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.samplayer.aidl.ISAMPlayerCallBack;
 import com.samplayer.core.manager.MediaSessionManager;
@@ -207,29 +208,35 @@ public class SAMPlayerService extends Service {
         SAMLog.i(TAG, "SAMPlayerService  onDestroy");
     }
 
+    /**
+     * 标记音频焦点是否是被系统打断，如果是被系统打断，那么当恢复音频焦点的时候应该继续开始播放
+     */
+    private boolean mAudioFocusBreakBySystem = false;
 
     private AudioFocusManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioFocusManager.OnAudioFocusChangeListener() {
 
-        private boolean mBreakBySystem = false;
-
         @Override
         public void onAudioFocusChange(int focusChange) {
+
+            Log.i(TAG, "onAudioFocusChange: mAudioFocusBreakBySystem=" + mAudioFocusBreakBySystem + ",focusChange=" + focusChange);
+
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                     //如果正在播放，那么暂停并标记
                     if (isPlaying()) {
-                        mBreakBySystem = true;
+                        mAudioFocusBreakBySystem = true;
                         pause();
                     }
                     break;
                 case AudioManager.AUDIOFOCUS_GAIN:
                     //如果被系统打断了播放，那么继续播放
-                    if (mBreakBySystem) {
+                    if (mAudioFocusBreakBySystem) {
                         start();
-                        mBreakBySystem = false;
+                        mAudioFocusBreakBySystem = false;
                     }
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS:
+                    mAudioFocusBreakBySystem = false;
                     pause();
                     mAudioFocusManager.abandonFocus();
                     break;
@@ -267,11 +274,18 @@ public class SAMPlayerService extends Service {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
+
+                Log.i(TAG, "handleMessage: " + msg.what);
+
                 switch (msg.what) {
                     case CmdHandlerHelper.CMD_PLAY:
                         start();
                         break;
                     case CmdHandlerHelper.CMD_PAUSE:
+                        /**
+                         * 当系统决定暂停播放的时候应该将标记为设置为false 不然可能重新拿到音频焦点的时候会开始播放
+                         */
+                        mAudioFocusBreakBySystem = false;
                         pause();
                         break;
                     case CmdHandlerHelper.CMD_NEXT:
@@ -284,6 +298,10 @@ public class SAMPlayerService extends Service {
                         toggle();
                         break;
                     case CmdHandlerHelper.CMD_STOP:
+                        /**
+                         * 当系统决定停止播放的时候应该将标记为设置为false 不然可能重新拿到音频焦点的时候会开始播放
+                         */
+                        mAudioFocusBreakBySystem = false;
                         stop();
                         break;
                     case CmdHandlerHelper.CMD_UP_VOLUME:
