@@ -114,10 +114,11 @@ public class MediaSessionManager {
         mMediaSessionCompat.setSessionActivity(clickIntent);
         //指明支持的按键信息类型
         mMediaSessionCompat.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        //监听的事件（播放，暂停，上一曲，下一曲）
+        //监听的事件（播放,暂停,上一曲,下一曲,停止播放）
         mPlaybackBuildCompat = new PlaybackStateCompat.Builder()
                 .setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PLAY_PAUSE
-                        | PlaybackStateCompat.ACTION_SKIP_TO_NEXT | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS);
+                        | PlaybackStateCompat.ACTION_SKIP_TO_NEXT | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                        | PlaybackStateCompat.ACTION_STOP);
         mMediaSessionCompat.setPlaybackState(mPlaybackBuildCompat.build());
 
 
@@ -150,6 +151,12 @@ public class MediaSessionManager {
             public void onSkipToPrevious() {
                 super.onSkipToPrevious();
                 CmdHandlerHelper.sendCmd(CmdHandlerHelper.CMD_PREVIOUS);
+            }
+
+            @Override
+            public void onStop() {
+                super.onStop();
+                CmdHandlerHelper.sendCmd(CmdHandlerHelper.CMD_STOP);
             }
         };
     }
