@@ -3,12 +3,16 @@ package com.samplayer.core.remote.player.cmd;
 import android.os.Handler;
 import android.os.Message;
 
+import com.samplayer.utils.SAMLog;
+
 /**
  * 用与接收外部发送的控制命令 然后进行转发
  * 比如{@link AudioFocusManager}发出的焦点事件
  * 比如{@link MediaButtonReceiver}发出的线控事件
  */
 public class CmdHandlerHelper {
+
+    private static final String TAG = "CmdHandlerHelper";
 
     public static final int CMD_PLAY = 1;
     public static final int CMD_PAUSE = 2;
@@ -29,6 +33,13 @@ public class CmdHandlerHelper {
     }
 
     public static void sendCmd(int cmd) {
+        if (mHandler == null) {
+            SAMLog.i(TAG, "sendCmd handler not inited");
+            return;
+        }
+
+        SAMLog.ifmt(TAG, "send cmd %d", cmd);
+
         Message message = mHandler.obtainMessage(cmd);
         mHandler.sendMessage(message);
     }
