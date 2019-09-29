@@ -240,7 +240,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
         mPlayListener.onPrepare(iMediaPlayer);
 
         iMediaPlayer.start();
-        if (mPlayListener != null) {
+        if (mPlayListener != null && getCurrentPlayInfo() != null) {
             mPlayListener.onPlayableStart(getCurrentPlayInfo());
             mPlayListener.onStart();
         }
