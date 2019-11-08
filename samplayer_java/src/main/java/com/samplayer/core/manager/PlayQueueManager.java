@@ -48,12 +48,22 @@ public class PlayQueueManager implements IPlayQueue {
 
     @Override
     public void appendPlayList(List<SongInfo> songInfos) {
+        if (songInfos == null || songInfos.size() <= 0) {
+            return;
+        }
         mSongInfos.addAll(songInfos);
     }
 
     @Override
     public void insertPlayList(int position, List<SongInfo> songInfos) {
-        mSongInfos.addAll(position,songInfos);
+        if (songInfos == null || songInfos.size() <= 0) {
+            return;
+        }
+        mSongInfos.addAll(position, songInfos);
+        //如果添加的播放列表在正在播放的序列前面，那么需要更改序列
+        if (position <= mIndex) {
+            mIndex += songInfos.size();
+        }
     }
 
     @Override
