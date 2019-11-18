@@ -192,7 +192,7 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
     }
 
     @Override
-    public IMediaPlayer getCurrentPlayer() {
+    public synchronized IMediaPlayer getCurrentPlayer() {
         if (mMediaPlayer == null) {
             mMediaPlayer = createMediaPlayer();
             initMediaPlayer();
@@ -204,17 +204,19 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
     /**
      * 获取一个新的播放器 会停止当前正在播放的并清空当前播放信息
      */
-    private IMediaPlayer getNewPlayer() {
+    private synchronized IMediaPlayer getNewPlayer() {
         if (mMediaPlayer != null) {
             mMediaPlayer.reset();
-            mSongInfo = null;
+        } else {
+            mMediaPlayer = createMediaPlayer();
         }
+        mSongInfo = null;
         initMediaPlayer();
         return mMediaPlayer;
     }
 
     @Override
-    public void release() {
+    public synchronized void release() {
         if (mMediaPlayer != null) {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.stop();
