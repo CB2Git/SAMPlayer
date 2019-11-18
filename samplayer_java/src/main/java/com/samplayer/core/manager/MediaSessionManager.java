@@ -10,6 +10,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 
+import com.samplayer.SAMConfig;
 import com.samplayer.core.remote.player.cmd.CmdHandlerHelper;
 import com.samplayer.model.SongInfo;
 import com.samplayer.utils.SAMLog;
@@ -89,6 +90,9 @@ public class MediaSessionManager {
 
     public void setActive(boolean active) {
         //必须设置为true，这样才能开始接收各种信息
+        if (mMediaSessionCompat == null) {
+            initMediaSession(SAMConfig.getAppContext());
+        }
         mMediaSessionCompat.setActive(active);
     }
 
