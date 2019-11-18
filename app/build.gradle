@@ -54,9 +54,9 @@ dependencies {
         implementation project(':samplayer_ijk_player')
         implementation project(':samplayer_cache')
     } else {
-        implementation 'com.github.SAMPlayer:samplayer_java:1.0.1'
-        implementation 'com.github.SAMPlayer:samplayer_cache:1.0.1'
-        implementation 'com.github.SAMPlayer:samplayer_exo:1.0.1'
-        implementation 'com.github.SAMPlayer:samplayer_ijk_player:1.0.1'
+        implementation 'com.github.SAMPlayer:samplayer_java:1.0.2'
+        implementation 'com.github.SAMPlayer:samplayer_cache:1.0.2'
+        implementation 'com.github.SAMPlayer:samplayer_exo:1.0.2'
+        implementation 'com.github.SAMPlayer:samplayer_ijk_player:1.0.2'
     }
 }
