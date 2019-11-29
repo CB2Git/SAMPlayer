@@ -180,6 +180,7 @@ public class SAMPlayerService extends Service {
         if (notificationConfig != null) {
             notificationConfig.release();
         }
+        CmdHandlerHelper.destroy();
         stopForeground(true);
         SAMLog.i(TAG, "SAMPlayerService  onDestroy");
     }

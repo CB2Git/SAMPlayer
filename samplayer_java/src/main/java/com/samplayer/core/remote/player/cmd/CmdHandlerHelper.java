@@ -32,6 +32,11 @@ public class CmdHandlerHelper {
         mHandler = handler;
     }
 
+    public static void destroy() {
+        mHandler = null;
+        SAMLog.i(TAG, "destroy CmdHandlerHelper");
+    }
+
     public static void sendCmd(int cmd) {
         if (mHandler == null) {
             SAMLog.i(TAG, "sendCmd handler not inited");
