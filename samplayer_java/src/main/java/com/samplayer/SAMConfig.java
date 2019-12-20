@@ -26,7 +26,7 @@ public class SAMConfig {
 
     public static Context getAppContext() {
         if (mAppContext == null) {
-            SAMLog.w(TAG, "getAppContext：没有初始化");
+            SAMLog.w(TAG, "getAppContext：没有初始化,请先调用SAMConfig.init()");
         }
         return mAppContext;
     }
