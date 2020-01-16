@@ -343,6 +343,11 @@ public class SAMPlayerService extends Service {
             }
 
             @Override
+            public void onStop() {
+                mUpdateProgressHandler.removeCallbacksAndMessages(null);
+            }
+
+            @Override
             public void onBufferStart() {
                 notifyBufferStart();
             }

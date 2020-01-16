@@ -139,7 +139,15 @@ public abstract class AbstractPlayManager implements IPlayManager, IMediaPlayer.
                     }
                     //因为拦截器中可以进行耗时操作
                     //所以当拦截器开始处理以后停止当前播放然后将新的歌曲信息回调回去
-                    getNewPlayer();
+                    //getNewPlayer();
+                    IMediaPlayer player = getCurrentPlayer();
+                    if (player.isPlaying()) {
+                        player.stop();
+                        if (mPlayListener != null) {
+                            mPlayListener.onStop();
+                        }
+                    }
+                    mSongInfo = null;
                 }
             });
             mCallbackWrapper.interceptor();

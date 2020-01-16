@@ -94,6 +94,11 @@ public interface IPlayManager {
         void onStart();
 
         /**
+         * 停止播放的时候的回调
+         */
+        void onStop();
+
+        /**
          * 开始缓冲
          */
         void onBufferStart();

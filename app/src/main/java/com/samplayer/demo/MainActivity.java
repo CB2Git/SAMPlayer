@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onPrepareStart(SongInfo songInfo) {
             super.onPrepareStart(songInfo);
+            Log.i("AbstractPlayManager", "onPrepareStart: " + songInfo.getSongName());
             mBinding.homeSongTitle.setText(songInfo.getSongName());
             mBinding.homeSongProgress.setMax(0);
             mBinding.homeSongProgress.setProgress(0);
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onPlayableStart(SongInfo songinfo) {
             super.onPlayableStart(songinfo);
+            Log.i("AbstractPlayManager", "onPlayableStart: " + songinfo.getSongName());
         }
 
 
@@ -113,7 +116,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void inInterceptorProcess(SongInfo info) {
             super.inInterceptorProcess(info);
             //这么做的原因看回调方法上面注释
-            onPlayableStart(info);
+            Log.i("AbstractPlayManager", "inInterceptorProcess: " + info.getSongName());
+            onPrepareStart(info);
         }
 
         @Override
